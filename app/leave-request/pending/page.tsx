@@ -1,8 +1,9 @@
 import { AppSidebar } from "@/components/app-sidebar";
 import { Separator } from "@/components/ui/separator";
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
-import { DataTable } from "./components/data-table";
+
 import { columns, data } from "./components/columns";
+import { DataTable } from "@/components/data-table";
 
 export default function LeaveRequestSummary() {
   return (
