@@ -1,6 +1,8 @@
 import { AppSidebar } from "@/components/app-sidebar";
 import { Separator } from "@/components/ui/separator";
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { DataTable } from "./components/data-table";
+import { columns, data } from "./components/columns";
 
 export default function LeaveRequestSummary() {
   return (
@@ -14,10 +16,13 @@ export default function LeaveRequestSummary() {
               orientation="vertical"
               className="mr-2 data-[orientation=vertical]:h-4"
             />
-          </div>Oczekujące wnioski urlopowe
+          </div>
+          Oczekujące wnioski urlopowe
         </header>
         <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-          <div className="bg-muted/50 min-h-[100vh] flex-1 rounded-xl md:min-h-min"></div>
+          <div className="bg-muted/50 min-h-[100vh] flex-1 rounded-xl md:min-h-min">
+            <DataTable columns={columns} data={data} />
+          </div>
         </div>
       </SidebarInset>
     </SidebarProvider>
