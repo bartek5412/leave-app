@@ -36,21 +36,21 @@ const data = {
   navMain: [
     {
       title: "Wnioski urlopowe",
-      url: "#",
+      url: "/dashboard",
       icon: SquareTerminal,
       isActive: true,
       items: [
         {
           title: "Oczekujące",
-          url: "#",
+          url: "/leave-request/pending",
         },
         {
           title: "Zaakceptowane",
-          url: "#",
+          url: "/leave-request/accepted",
         },
         {
           title: "Archiwum",
-          url: "#",
+          url: "/leave-request/archive",
         },
       ],
     },
@@ -105,7 +105,7 @@ const data = {
       icon: Send,
     },
   ],
-}
+};
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
