@@ -9,9 +9,67 @@ generator client {
 datasource db {
   provider = "sqlite"
 }
+// -------------------------------------------------
+// 1. Model Użytkownika (Pracownika)
+// -------------------------------------------------
 model User {
-  id        Int      @id @default(autoincrement())
-  name     String
+  id        String   @id @default(uuid())
+  email     String   @unique
+  firstName String
+  lastName  String
+  
+  // Opcjonalnie: rola użytkownika (np. "EMPLOYEE", "ADMIN", "MANAGER")
+  role      String   @default("EMPLOYEE") 
+
+  // Relacja: Użytkownik może mieć wiele wniosków urlopowych
+  leaves    Leave[]
+
   createdAt DateTime @default(now())
-@@map("users")
+  updatedAt DateTime @updatedAt
+}
+
+// -------------------------------------------------
+// 2. Model Typu Urlopu (Słownik)
+// -------------------------------------------------
+model LeaveType {
+  id          String   @id @default(uuid())
+  name        String   @unique // np. "Wypoczynkowy", "L4", "Na żądanie", "Okolicznościowy"
+  description String?  // Opcjonalny opis
+  
+  // Opcjonalnie: domyślna pula dni w roku dla tego typu
+  defaultDays Int?     
+
+  // Relacja: Jeden typ urlopu może być przypisany do wielu wniosków
+  leaves      Leave[]
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// -------------------------------------------------
+// 3. Model Wniosku Urlopowego
+// -------------------------------------------------
+model Leave {
+  id          String   @id @default(uuid())
+  startDate   DateTime // Data rozpoczęcia urlopu
+  endDate     DateTime // Data zakończenia urlopu
+  
+  // Status wniosku (np. "PENDING", "APPROVED", "REJECTED")
+  status      String   @default("PENDING") 
+  reason      String?  // Opcjonalne uzasadnienie wniosku
+
+  // ----------------------------------------------
+  // Klucze obce i relacje
+  // ----------------------------------------------
+  
+  // Powiązanie z użytkownikiem
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Powiązanie z typem urlopu
+  leaveTypeId String
+  leaveType   LeaveType @relation(fields: [leaveTypeId], references: [id], onDelete: Restrict)
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
