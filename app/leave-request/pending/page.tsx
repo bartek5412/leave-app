@@ -1,11 +1,42 @@
+"use client";
 import { AppSidebar } from "@/components/app-sidebar";
 import { Separator } from "@/components/ui/separator";
-import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import {
+  SidebarInset,
+  SidebarProvider,
+  SidebarTrigger,
+} from "@/components/ui/sidebar";
 
-import { columns, data } from "./components/columns";
+import { columnsPending} from "./components/columns";
 import { DataTable } from "@/components/data-table";
+import { useEffect, useState } from "react";
+import { LeaveRequestFromApi } from "@/lib/types";
 
 export default function LeaveRequestSummary() {
+  const [fetchData, setFetchData] = useState<LeaveRequestFromApi[] | null>(
+    null,
+  );
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchLeaves() {
+      try {
+        setIsLoading(true);
+        const res = await fetch("/api/leave-request?status=PENDING");
+        if (!res.ok) {
+          throw new Error("Fetch error");
+        }
+        const fetchData: LeaveRequestFromApi[] = await res.json();
+        setFetchData(fetchData);
+      } catch (error) {
+        console.error("Błąd zapytania", error);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    fetchLeaves();
+  }, []);
+
   return (
     <SidebarProvider>
       <AppSidebar />
@@ -22,7 +53,11 @@ export default function LeaveRequestSummary() {
         </header>
         <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
           <div className="bg-muted/50 min-h-[100vh] flex-1 rounded-xl md:min-h-min">
-            <DataTable columns={columns} data={data} />
+            <DataTable
+              columns={columnsPending}
+              data={fetchData ?? []}
+              isLoading={isLoading}
+            />
           </div>
         </div>
       </SidebarInset>
