@@ -1,3 +1,4 @@
+"use client";
 import { AppSidebar } from "@/components/app-sidebar";
 import { Separator } from "@/components/ui/separator";
 import {
@@ -7,8 +8,19 @@ import {
 } from "@/components/ui/sidebar";
 import CalendarSchedule from "./components/CalendarSchedule";
 import CalendarSummary from "./components/CalendarSummary";
+import { useState } from "react";
+
+interface LeavePayload {
+  endDate: Date | null;
+  startDate: Date | null;
+}
 
 export default function Page() {
+  const [payload, setPayload] = useState<LeavePayload>({
+    endDate: null,
+    startDate: null,
+  });
+  console.log(payload, "payload");
   return (
     <SidebarProvider>
       <AppSidebar />
@@ -24,8 +36,22 @@ export default function Page() {
           Wnioski urlopowe
         </header>
         <div className="flex flex-1 flex-row gap-4 p-4 pt-0">
-          <div className="bg-muted/50 min-h-[100vh] flex-1 rounded-xl md:min-h-min"><CalendarSchedule/></div>
-          <div className="bg-muted/50 min-h-[100vh] flex-1 rounded-xl md:min-h-min"><CalendarSummary/></div>
+          <div className="bg-muted/50 min-h-[100vh] flex-1 rounded-xl md:min-h-min">
+            <CalendarSchedule
+              endDate={payload.endDate}
+              startDate={payload.startDate}
+              onChange={(start, end) =>
+                setPayload((prev) => ({
+                  ...prev,
+                  startDate: start,
+                  endDate: end,
+                }))
+              }
+            />
+          </div>
+          <div className="bg-muted/50 min-h-[100vh] flex-1 rounded-xl md:min-h-min">
+            <CalendarSummary />
+          </div>
         </div>
       </SidebarInset>
     </SidebarProvider>

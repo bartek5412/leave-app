@@ -17,6 +17,7 @@ import { useState } from "react";
 
 export default function CalendarSummary() {
   const [isFullDay, setIsFullDay] = useState(false);
+  const [payload, setPayload] = useState(null)
   return (
     <Card className="w-full h-full flex flex-col">
       <CardHeader>Szczegóły wniosku</CardHeader>

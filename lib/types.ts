@@ -30,3 +30,4 @@ export type LeaveRequestFromApi = {
   createdAt: string;
   updatedAt: string;
 };
+
