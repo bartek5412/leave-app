@@ -1,3 +1,4 @@
+import { LeavePayload } from "@/app/dashboard/page";
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 
@@ -20,6 +21,33 @@ export async function GET(request: Request) {
 }
 
 export async function POST(request: Request) {
-  const body = await request.json();
-  console.log(body);
+  try {
+    const body: LeavePayload = await request.json();
+    const { description, hours, type, startDate, endDate } = body;
+    if (!type || !startDate || !endDate) {
+      return NextResponse.json(
+        { message: "Brak wymaganych danych" },
+        { status: 400 },
+      );
+    }
+    const newLeave = await prisma.leave.create({
+      data: {
+        startDate: startDate,
+        endDate: endDate,
+        status: "PENDING",
+        userId: "26a66526-2cb4-4ec9-b721-981748432fac",
+        leaveTypeId: "b82212a2-daaa-4afa-bfe8-79fc4c5a7b2f",
+      },
+    });
+    return NextResponse.json(
+      {
+        message: "Poprawnie utworzono wniosek",
+        leave: newLeave,
+      },
+      { status: 200 },
+    );
+  } catch (error) {
+    console.error("Błąd serwera", error);
+    return NextResponse.json({ message: "Bład serwera" }, { status: 500 });
+  }
 }

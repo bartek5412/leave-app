@@ -13,18 +13,34 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
-import { useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
+import { LeavePayload } from "../page";
 
-export default function CalendarSummary() {
-  const [isFullDay, setIsFullDay] = useState(false);
-  const [payload, setPayload] = useState(null)
+interface CalendarSummaryProps {
+  payload: LeavePayload;
+  setPayload: Dispatch<SetStateAction<LeavePayload>>;
+  handleSubmit: () => void;
+}
+
+export default function CalendarSummary({
+  payload,
+  setPayload,
+  handleSubmit,
+}: CalendarSummaryProps) {
+  const [isFullDay, setIsFullDay] = useState(true);
+
   return (
     <Card className="w-full h-full flex flex-col">
       <CardHeader>Szczegóły wniosku</CardHeader>
       <CardContent className="flex flex-col flex-1">
         <div className="flex w-full flex-col flex-1 gap-4 mt-5">
           <Label className="">Wybierz rodzaj urlopu</Label>
-          <Select>
+          <Select
+            value={payload.type}
+            onValueChange={(value) =>
+              setPayload((prev) => ({ ...prev, type: value }))
+            }
+          >
             <SelectTrigger className="w-full">
               <SelectValue placeholder="Wybierz rodzaj urlopu" />
             </SelectTrigger>
@@ -43,15 +59,46 @@ export default function CalendarSummary() {
             <Switch checked={isFullDay} onCheckedChange={setIsFullDay} />
             {!isFullDay ? (
               <>
-                <Label>Ilość godzin</Label>
-                <Input className="w-12" placeholder="4h"></Input>{" "}
+                <div className="flex flex-row gap-4 items-center">
+                  <Label htmlFor="hoursAmount">Ilość godzin</Label>
+                  {/* Kontener relative, który trzyma input i literkę "h" */}
+                  <div className="relative inline-block w-20">
+                    <Input
+                      value={payload.hours}
+                      onChange={(e) =>
+                        setPayload((prev) => ({
+                          ...prev,
+                          hours: e.target.valueAsNumber,
+                        }))
+                      }
+                      min={0}
+                      max={8}
+                      id="hoursAmount"
+                      type="number"
+                      className="w-full pr-6" /* pr-6 robi miejsce z prawej strony na "h" */
+                      placeholder="4"
+                    />
+                    {/* Absolutnie pozycjonowana literka "h" */}
+                    <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-sm text-gray-500">
+                      h
+                    </span>
+                  </div>
+                </div>
               </>
             ) : null}
           </div>
           <Label className="">Informacje dodatkowe</Label>
-          <Input placeholder="Pole nie jest wymagane"></Input>
+          <Input
+            value={payload.description}
+            onChange={(e) =>
+              setPayload((prev) => ({ ...prev, description: e.target.value }))
+            }
+            placeholder="Pole nie jest wymagane"
+          ></Input>
         </div>
-        <Button className="w-full mt-auto">Złóż wniosek</Button>
+        <Button onClick={handleSubmit} className="w-full mt-auto">
+          Złóż wniosek
+        </Button>
       </CardContent>
     </Card>
   );

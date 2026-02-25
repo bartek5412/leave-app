@@ -10,7 +10,10 @@ import CalendarSchedule from "./components/CalendarSchedule";
 import CalendarSummary from "./components/CalendarSummary";
 import { useState } from "react";
 
-interface LeavePayload {
+export interface LeavePayload {
+  type: string;
+  hours: number;
+  description: string;
   endDate: Date | null;
   startDate: Date | null;
 }
@@ -19,8 +22,41 @@ export default function Page() {
   const [payload, setPayload] = useState<LeavePayload>({
     endDate: null,
     startDate: null,
+    type: "",
+    hours: 0,
+    description: "",
   });
-  console.log(payload, "payload");
+
+  const handleSubmit = async () => {
+    if (!payload.startDate || !payload.endDate || !payload.type) {
+      alert("Niepoprawne dane wniosku");
+      return;
+    }
+    console.log(payload);
+    try {
+      const response = await fetch("/api/leave-request", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+      if (!response.ok) {
+        throw new Error(`Bład zapytania: ${response.status}`);
+      }
+      alert("Poprawnie wysłano wniosek");
+      setPayload({
+        description: "",
+        endDate: null,
+        hours: 0,
+        startDate: null,
+        type: "",
+      });
+    } catch (error) {
+      alert(`Nie udało się przesłać wniosku, bład: ${error}`);
+    }
+  };
+
   return (
     <SidebarProvider>
       <AppSidebar />
@@ -50,7 +86,11 @@ export default function Page() {
             />
           </div>
           <div className="bg-muted/50 min-h-[100vh] flex-1 rounded-xl md:min-h-min">
-            <CalendarSummary />
+            <CalendarSummary
+              payload={payload}
+              setPayload={setPayload}
+              handleSubmit={handleSubmit}
+            />
           </div>
         </div>
       </SidebarInset>
