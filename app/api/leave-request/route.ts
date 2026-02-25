@@ -36,7 +36,7 @@ export async function POST(request: Request) {
         endDate: endDate,
         status: "PENDING",
         userId: "26a66526-2cb4-4ec9-b721-981748432fac",
-        leaveTypeId: "b82212a2-daaa-4afa-bfe8-79fc4c5a7b2f",
+        leaveTypeId: type,
       },
     });
     return NextResponse.json(

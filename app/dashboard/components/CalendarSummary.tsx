@@ -15,6 +15,7 @@ import {
 import { Switch } from "@/components/ui/switch";
 import { Dispatch, SetStateAction, useState } from "react";
 import { LeavePayload } from "../page";
+import { LeaveRequestTypes } from "@/hooks/useLeaveTypes";
 
 interface CalendarSummaryProps {
   payload: LeavePayload;
@@ -28,6 +29,7 @@ export default function CalendarSummary({
   handleSubmit,
 }: CalendarSummaryProps) {
   const [isFullDay, setIsFullDay] = useState(true);
+  const { leaveType, isLoading, error } = LeaveRequestTypes();
 
   return (
     <Card className="w-full h-full flex flex-col">
@@ -36,24 +38,28 @@ export default function CalendarSummary({
         <div className="flex w-full flex-col flex-1 gap-4 mt-5">
           <Label className="">Wybierz rodzaj urlopu</Label>
           <Select
+            disabled={isLoading}
             value={payload.type}
             onValueChange={(value) =>
               setPayload((prev) => ({ ...prev, type: value }))
             }
           >
             <SelectTrigger className="w-full">
-              <SelectValue placeholder="Wybierz rodzaj urlopu" />
+              <SelectValue
+                placeholder={isLoading ? "Ładowanie..." : "Wybierz typ urlopu"}
+              />
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
                 <SelectLabel>Rodzaj urlopu</SelectLabel>
-                <SelectItem value="vacation">Urlop wypoczynkowy</SelectItem>
-                <SelectItem value="schooll">Urlop szkoleniowy</SelectItem>
-                <SelectItem value="free">Urlop bezpłatny</SelectItem>
+                {leaveType.map((type) => (
+                  <SelectItem key={type.id} value={type.id}>
+                    {type.name}
+                  </SelectItem>
+                ))}
               </SelectGroup>
             </SelectContent>
           </Select>
-
           <Label>Urlop całodniowy</Label>
           <div className="flex flex-row items-center gap-4 h-10">
             <Switch checked={isFullDay} onCheckedChange={setIsFullDay} />
