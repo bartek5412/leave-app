@@ -31,3 +31,12 @@ export type LeaveRequestFromApi = {
   updatedAt: string;
 };
 
+export type UserRequestFromApi = {
+  firstName: string;
+  lastName: string;
+  email: string;
+  role: string;
+  leaderId: string;
+  availableDays: number;
+}
+
