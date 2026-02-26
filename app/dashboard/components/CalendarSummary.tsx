@@ -70,6 +70,7 @@ export default function CalendarSummary({
                   {/* Kontener relative, który trzyma input i literkę "h" */}
                   <div className="relative inline-block w-20">
                     <Input
+                      
                       value={payload.hours}
                       onChange={(e) =>
                         setPayload((prev) => ({

@@ -6,7 +6,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import PendigRowActions from "./leaveRequestRowActions";
 import { LeaveRequestFromApi } from "@/lib/types";
 
-export const columnsPending: ColumnDef<LeaveRequestFromApi>[] = [
+export const columnsPending = (onActionSuccess: () => void): ColumnDef<LeaveRequestFromApi>[] => [
   {
     accessorKey: "Status",
     header: () => <div className="text-center">Status</div>,
@@ -51,7 +51,7 @@ export const columnsPending: ColumnDef<LeaveRequestFromApi>[] = [
     id: "actions",
     header: () => <div className="text-center">Akcje</div>,
     cell: ({ row }) => {
-      return <PendigRowActions />;
+      return <PendigRowActions leaveId={row.original.id} onSuccess={onActionSuccess} />;
     },
   },
 ];

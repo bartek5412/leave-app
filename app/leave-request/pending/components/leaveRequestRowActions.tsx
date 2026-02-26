@@ -8,11 +8,34 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { MoreHorizontal } from "lucide-react";
-export default function PendigRowActions() {
 
-  const handleButtonClick= () => {
-    alert("TEST");
-  }
+interface PendigRowActionsProps {
+  leaveId: string;
+  onSuccess: () => void;
+}
+
+export default function PendigRowActions({
+  leaveId,
+  onSuccess,
+}: PendigRowActionsProps) {
+  const handleStatusChange = async (newStatus: "APPROVED" | "REJECTED") => {
+    try {
+      const response = await fetch(`/api/leave-request/${leaveId}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ status: newStatus }),
+      });
+      if (response.ok) {
+        onSuccess();
+      } else {
+        alert("Błąd aktualizacji wniosku");
+      }
+    } catch (error) {
+      console.error("Błąd", error);
+    }
+  };
 
   return (
     <div className="text-center">
@@ -26,9 +49,14 @@ export default function PendigRowActions() {
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>Akcje</DropdownMenuLabel>
           <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={handleButtonClick}>Akceptuj</DropdownMenuItem>
+          <DropdownMenuItem onClick={() => handleStatusChange("APPROVED")}>
+            Akceptuj
+          </DropdownMenuItem>
           <DropdownMenuItem>Edytuj urlop</DropdownMenuItem>
-          <DropdownMenuItem className="bg-red-700 text-white focus:bg-red-600 focus:text-white mt-2">
+          <DropdownMenuItem
+            onClick={() => handleStatusChange("REJECTED")}
+            className="bg-red-700 text-white focus:bg-red-600 focus:text-white mt-2"
+          >
             Anuluj urlop
           </DropdownMenuItem>
         </DropdownMenuContent>

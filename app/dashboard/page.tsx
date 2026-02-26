@@ -23,7 +23,7 @@ export default function Page() {
     endDate: null,
     startDate: null,
     type: "",
-    hours: 0,
+    hours: 8,
     description: "",
   });
 
@@ -48,7 +48,7 @@ export default function Page() {
       setPayload({
         description: "",
         endDate: null,
-        hours: 0,
+        hours: 8,
         startDate: null,
         type: "",
       });

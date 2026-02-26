@@ -21,7 +21,7 @@ export default function LeaveRequestSummary() {
     async function fetchLeaves() {
       try {
         setIsLoading(true);
-        const res = await fetch("/api/leave-request?status=ARCHIVE");
+        const res = await fetch("/api/leave-request?status=REJECTED");
         if (!res.ok) {
           throw new Error("Błąd zapytania");
         }

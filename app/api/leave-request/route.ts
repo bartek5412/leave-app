@@ -37,6 +37,8 @@ export async function POST(request: Request) {
         status: "PENDING",
         userId: "26a66526-2cb4-4ec9-b721-981748432fac",
         leaveTypeId: type,
+        hours: hours,
+        isFree: false
       },
     });
     return NextResponse.json(
