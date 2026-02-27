@@ -4,7 +4,7 @@ export type LeaveRequestFromApi = {
   endDate: string; // DateTime -> string w JSON
   status: "PENDING" | "APPROVED" | "REJECTED"; // lub po prostu string, jeśli backend nie zawęża
   reason: string | null;
-
+  hours: number;
   userId: string;
   leaveTypeId: string;
 

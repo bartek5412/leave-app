@@ -37,7 +37,9 @@ export default function UserList() {
           data={fetchData ?? []}
           columns={columnsUser}
         />
+
       </CardContent>
+
     </Card>
   );
 }

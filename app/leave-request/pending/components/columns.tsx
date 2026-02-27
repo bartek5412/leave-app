@@ -6,7 +6,9 @@ import { ColumnDef } from "@tanstack/react-table";
 import PendigRowActions from "./leaveRequestRowActions";
 import { LeaveRequestFromApi } from "@/lib/types";
 
-export const columnsPending = (onActionSuccess: () => void): ColumnDef<LeaveRequestFromApi>[] => [
+export const columnsPending = (
+  onActionSuccess: () => void,
+): ColumnDef<LeaveRequestFromApi>[] => [
   {
     accessorKey: "Status",
     header: () => <div className="text-center">Status</div>,
@@ -48,10 +50,28 @@ export const columnsPending = (onActionSuccess: () => void): ColumnDef<LeaveRequ
     },
   },
   {
+    accessorKey: "Ilość godzin",
+    header: () => <div className="text-center">Ilość godzin</div>,
+    cell: ({ row }) => {
+      return (
+        <div className="text-center font-medium">{row.original.hours}</div>
+      );
+    },
+  },
+  {
     id: "actions",
     header: () => <div className="text-center">Akcje</div>,
     cell: ({ row }) => {
-      return <PendigRowActions leaveId={row.original.id} onSuccess={onActionSuccess} />;
+      return (
+        <PendigRowActions
+          hours={row.original.hours}
+          startDate={row.original.startDate}
+          endDate={row.original.endDate}
+          type={row.original.leaveType.id}
+          leaveId={row.original.id}
+          onSuccess={onActionSuccess}
+        />
+      );
     },
   },
 ];

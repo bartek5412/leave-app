@@ -29,7 +29,8 @@ export default function AdminPanel() {
               className="mr-2 data-[orientation=vertical]:h-4"
             />
           </div>
-          <Breadcrumb>
+          Zarządzanie użytkownikami
+          {/* <Breadcrumb>
             <BreadcrumbList>
               <BreadcrumbItem>
                 <BreadcrumbLink href="/dashboard">
@@ -47,17 +48,17 @@ export default function AdminPanel() {
                 <BreadcrumbPage>Zarządzanie użytkownikami</BreadcrumbPage>
               </BreadcrumbItem>
             </BreadcrumbList>
-          </Breadcrumb>
+          </Breadcrumb> */}
         </header>
         <div className="flex flex-1 flex-col gap-4 p-4 min-h-0 overflow-hidden">
           {/* Górne karty: shrink-0, żeby nie zmieniały rozmiaru */}
-          <div className="grid auto-rows-min gap-4 md:grid-cols-5 shrink-0">
+          {/* <div className="grid auto-rows-min gap-4 md:grid-cols-5 shrink-0">
             <div className="bg-muted/50 aspect-video rounded-xl"></div>
             <div className="bg-muted/50 aspect-video rounded-xl"></div>
             <div className="bg-muted/50 aspect-video rounded-xl"></div>
             <div className="bg-muted/50 aspect-video rounded-xl"></div>
             <div className="bg-muted/50 aspect-video rounded-xl"></div>
-          </div>
+          </div> */}
 
           {/* Kontener UserList: flex-1 i min-h-0 to klucz do działania ScrollArea */}
           <div className="bg-muted/50 flex-1 rounded-xl min-h-0 flex flex-col overflow-hidden">

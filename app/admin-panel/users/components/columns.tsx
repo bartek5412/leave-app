@@ -98,6 +98,7 @@ export const columnsUser: ColumnDef<UserRequestFromApi>[] = [
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Akcje</DropdownMenuLabel>
               <DropdownMenuSeparator />
+
               <DropdownMenuItem>Edytuj użytkownika</DropdownMenuItem>
               <DropdownMenuItem className="bg-red-700 text-white focus:bg-red-600 focus:text-white mt-2">
                 Usuń użytkownika

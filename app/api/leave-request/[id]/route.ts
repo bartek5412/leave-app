@@ -36,7 +36,6 @@ export async function PATCH(
           acceptedAt: status === "APPROVED" ? new Date() : null,
         },
       });
-     
     });
     return NextResponse.json(
       { message: "Wniosek zaktualizowany", leave: result },
@@ -47,5 +46,36 @@ export async function PATCH(
       { message: error.message || "Błąd serwera" },
       { status: 400 },
     );
+  }
+}
+
+export async function PUT(response: Response) {
+  try {
+    const body = await response.json();
+    const { id, hours, startDate, endDate, type } = body;
+    if (!id || !hours || !startDate || !endDate || !type) {
+      return NextResponse.json(
+        { message: "Brak wymaganych danych" },
+        { status: 400 },
+      );
+    }
+    const result = await prisma.leave.update({
+      where: { id: id },
+      data: {
+        id: id,
+        hours: Number(hours),
+        startDate: startDate,
+        endDate: endDate,
+        leaveTypeId: type,
+        updatedAt: new Date(),
+      },
+    });
+    return NextResponse.json(
+      { message: "Poprawnie zaktualizowano wniosek", data: result },
+      { status: 200 },
+    );
+  } catch (error) {
+    console.error("Błąd", error);
+    return NextResponse.json({ error: "Błąd serwera" }, { status: 500 });
   }
 }
