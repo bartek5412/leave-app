@@ -72,26 +72,26 @@ const data = {
         },
       ],
     },
-    {
-      access: "EMPLOYE",
-      title: "Ustawienia",
-      url: "#",
-      icon: Settings2,
-      items: [
-        {
-          title: "Zmień dane",
-          url: "#",
-        },
-        {
-          title: "Zmień hasło",
-          url: "#",
-        },
-        {
-          title: "Eksportuj urlopy",
-          url: "#",
-        },
-      ],
-    },
+    // {
+    //   access: "EMPLOYE",
+    //   title: "Ustawienia",
+    //   url: "#",
+    //   icon: Settings2,
+    //   items: [
+    //     {
+    //       title: "Zmień dane",
+    //       url: "#",
+    //     },
+    //     {
+    //       title: "Zmień hasło",
+    //       url: "#",
+    //     },
+    //     {
+    //       title: "Eksportuj urlopy",
+    //       url: "#",
+    //     },
+    //   ],
+    // },
   ],
   navSecondary: [
     {

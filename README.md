@@ -1,36 +1,110 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Leave App
 
-## Getting Started
+Aplikacja do zarzadzania wnioskami urlopowymi stworzona jako projekt portfolio.
 
-First, run the development server:
+## O projekcie
+
+`Leave App` to system, w ktorym:
+- pracownik sklada wniosek urlopowy,
+- manager/admin przeglada i podejmuje decyzje,
+- system aktualizuje status i ewidencje dni/godzin.
+
+Projekt pokazuje pelny przeplyw fullstack:
+- frontend w React/Next.js (App Router),
+- backend w Route Handlers,
+- autoryzacja i sesja (NextAuth),
+- baza danych SQLite przez Prisma.
+
+## Najwazniejsze funkcje
+
+- logowanie przez `Credentials` (NextAuth)
+- rejestracja uzytkownika z hashowaniem hasla (`bcryptjs`)
+- tworzenie wnioskow urlopowych
+- podglad list:
+  - oczekujace
+  - zaakceptowane
+  - archiwum
+- akcje na wnioskach:
+  - akceptacja / odrzucenie
+  - edycja wybranych danych
+- panel administracyjny:
+  - lista uzytkownikow
+  - lista wszystkich wnioskow
+
+## Tech stack
+
+- **Frontend:** Next.js 16, React 19, TypeScript, Tailwind CSS 4, shadcn/ui
+- **Backend:** Next.js Route Handlers (REST API)
+- **Auth:** NextAuth (JWT session strategy)
+- **Database:** SQLite + Prisma + `@prisma/adapter-better-sqlite3`
+- **UI/Data:** TanStack Table, Lucide Icons, React Day Picker
+
+## Architektura i modele
+
+Glowne encje w bazie:
+- `User`
+- `LeaveType`
+- `Leave`
+
+Relacje:
+- `User` 1..n `Leave`
+- `LeaveType` 1..n `Leave`
+
+## API (wybrane endpointy)
+
+- `POST /api/auth/[...nextauth]` - logowanie
+- `GET /api/users` - lista uzytkownikow
+- `POST /api/users` - rejestracja
+- `GET /api/leave-type` - lista rodzajow urlopu
+- `GET /api/leave-request` - lista wnioskow (opcjonalnie z filtrem statusu)
+- `POST /api/leave-request` - utworzenie wniosku
+- `PATCH /api/leave-request/[id]` - zmiana statusu
+- `PUT /api/leave-request/[id]` - edycja wniosku
+
+## Uruchomienie lokalne
+
+Wymagania:
+- Node.js 20+
+- npm
+
+1. Sklonuj repozytorium:
+
+```bash
+git clone <https://github.com/bartek5412/leave-app>
+cd leave-app
+```
+
+2. Zainstaluj zaleznosci:
+
+```bash
+npm install
+```
+
+3. Skonfiguruj zmienne srodowiskowe (`.env`), np.:
+
+```env
+DATABASE_URL="file:./dev.db"
+NEXTAUTH_SECRET="twoj-sekret"
+NEXTAUTH_URL="http://localhost:3000"
+```
+
+4. Uruchom aplikacje:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Aplikacja bedzie dostepna pod: `http://localhost:3000`
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Roadmap / dalszy rozwoj
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- walidacja danych (np. Zod)
+- testy jednostkowe i e2e
+- role i uprawnienia oparte o middleware/proxy
+- paginacja, filtrowanie i sortowanie po stronie API
+- wdrozenie produkcyjne (Docker + CI/CD)
 
-## Learn More
+## Autor
 
-To learn more about Next.js, take a look at the following resources:
+**bartek5412**  
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.

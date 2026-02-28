@@ -7,13 +7,13 @@ import { authOptions } from "../auth/[...nextauth]/route";
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const status = searchParams.get("status");
+  const session = await getServerSession(authOptions);
 
   const data = await prisma.leave.findMany({
-    where: status
-      ? {
-          status: status,
-        }
-      : undefined,
+    where: {
+      userId: session?.user.role !== "LEADER" ? session?.user.id : undefined,
+      status: status || undefined,
+    },
     include: {
       leaveType: true,
       user: true,

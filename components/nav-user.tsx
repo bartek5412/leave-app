@@ -58,7 +58,9 @@ export function NavUser({
                 <span className="truncate font-medium">
                   {session?.user.name}
                 </span>
-                <span className="truncate text-xs">{session?.user.email}</span>
+                <span className="truncate text-md font-bold">
+                  {session?.user.firstName} {session?.user.lastName}
+                </span>
               </div>
               <ChevronsUpDown className="ml-auto size-4" />
             </SidebarMenuButton>

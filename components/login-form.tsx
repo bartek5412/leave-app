@@ -19,6 +19,7 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { Label } from "./ui/label";
 
 export function LoginForm({
   className,
@@ -110,6 +111,9 @@ export function LoginForm({
               </Field>
             </FieldGroup>
           </form>
+          <Button onClick={() => router.push("/register")} variant="outline" className="w-full mt-4">
+            Zarejestruj się
+          </Button>
         </CardContent>
       </Card>
     </div>

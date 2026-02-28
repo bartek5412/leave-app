@@ -4,7 +4,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
 
-export const authOptions:NextAuthOptions = {
+export const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
       name: "Logowanie",
@@ -41,7 +41,13 @@ export const authOptions:NextAuthOptions = {
         }
 
         // 3. Zwracamy obiekt użytkownika (zostanie zapisany w tokenie JWT)
-        return { id: user.id, email: user.email, role: user.role };
+        return {
+          id: user.id,
+          email: user.email,
+          role: user.role,
+          firstName: user.firstName,
+          lastName: user.lastName,
+        };
       },
     }),
   ],
@@ -58,21 +64,25 @@ export const authOptions:NextAuthOptions = {
       // Jeśli logujemy się po raz pierwszy, obiekt 'user' będzie dostępny
       if (user) {
         token.id = user.id;
-        token.role = user.role; // Zapisujemy rolę do tokena (JWT)
+        token.role = user.role;
+        token.firstName = user.firstName;
+        token.lastName = user.lastName;
       }
       return token; // ZAWSZE musisz zwrócić token!
     },
     async session({ session, token }) {
       // Przepisujemy dane z tokena do obiektu sesji (który potem odczytujesz w app)
       if (token && session.user) {
-        session.user.id = token.id as string;
-        session.user.role = token.role as string;
+        session.user.id = token.id;
+        session.user.role = token.role;
+        session.user.firstName = token.firstName;
+        session.user.lastName = token.lastName;
       }
       return session; // ZAWSZE musisz zwrócić sesję!
     },
   },
 };
 
-const handler = NextAuth(authOptions)
+const handler = NextAuth(authOptions);
 
 export { handler as GET, handler as POST };
