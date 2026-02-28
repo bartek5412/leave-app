@@ -70,7 +70,7 @@ Wymagania:
 1. Sklonuj repozytorium:
 
 ```bash
-git clone <https://github.com/bartek5412/leave-app>
+git clone https://github.com/bartek5412/leave-app
 cd leave-app
 ```
 
