@@ -9,6 +9,7 @@ import {
 import CalendarSchedule from "./components/CalendarSchedule";
 import CalendarSummary from "./components/CalendarSummary";
 import { useState } from "react";
+import { useSession } from "next-auth/react";
 
 export interface LeavePayload {
   type: string;
@@ -19,6 +20,8 @@ export interface LeavePayload {
 }
 
 export default function Page() {
+  const session = useSession();
+
   const [payload, setPayload] = useState<LeavePayload>({
     endDate: null,
     startDate: null,

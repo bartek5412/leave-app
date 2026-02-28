@@ -1,6 +1,8 @@
 import { LeavePayload } from "@/app/dashboard/page";
 import { prisma } from "@/lib/prisma";
+import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
+import { authOptions } from "../auth/[...nextauth]/route";
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -14,7 +16,9 @@ export async function GET(request: Request) {
       : undefined,
     include: {
       leaveType: true,
+      user: true,
     },
+    orderBy: { createdAt: "desc" },
   });
 
   return NextResponse.json(data);
@@ -23,8 +27,10 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
   try {
     const body: LeavePayload = await request.json();
+    const session = await getServerSession(authOptions);
+    console.log(session?.user.id);
     const { description, hours, type, startDate, endDate } = body;
-    if (!type || !startDate || !endDate) {
+    if (!type || !startDate || !endDate || !session?.user.id) {
       return NextResponse.json(
         { message: "Brak wymaganych danych" },
         { status: 400 },
@@ -35,10 +41,10 @@ export async function POST(request: Request) {
         startDate: startDate,
         endDate: endDate,
         status: "PENDING",
-        userId: "26a66526-2cb4-4ec9-b721-981748432fac",
+        userId: session.user.id,
         leaveTypeId: type,
         hours: hours,
-        isFree: false
+        isFree: false,
       },
     });
     return NextResponse.json(

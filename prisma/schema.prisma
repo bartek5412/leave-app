@@ -11,6 +11,7 @@ datasource db {
 }
 model User {
   id        String   @id @default(uuid())
+  leaves    Leave[]
   email     String   @unique
   password  String
   firstName String
@@ -40,6 +41,7 @@ model Leave {
   status      String   @default("PENDING") 
   reason      String?  
   userId      String
+  user        User @relation(fields: [userId], references: [id], onDelete: Restrict)
   leaveTypeId String
   leaveType   LeaveType @relation(fields: [leaveTypeId], references: [id], onDelete: Restrict)
   acceptedAt  DateTime?

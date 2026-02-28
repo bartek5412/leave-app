@@ -15,6 +15,7 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import UserList from "./components/UserList";
+import { Button } from "@/components/ui/button";
 
 export default function AdminPanel() {
   return (
@@ -29,7 +30,10 @@ export default function AdminPanel() {
               className="mr-2 data-[orientation=vertical]:h-4"
             />
           </div>
-          Zarządzanie użytkownikami
+          <div className="flex flex-row w-full items-center gap-4 justify-between mx-4">
+            <span className="">Zarządzanie użytkownikami </span>
+            <Button className="">Dodaj użytkownika</Button>
+          </div>
           {/* <Breadcrumb>
             <BreadcrumbList>
               <BreadcrumbItem>

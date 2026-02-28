@@ -18,11 +18,13 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
 } from "@/components/ui/sidebar"
+import { useSession } from "next-auth/react"
 
 export function NavMain({
   items,
 }: {
   items: {
+    access?: string,
     title: string
     url: string
     icon: LucideIcon
@@ -33,11 +35,22 @@ export function NavMain({
     }[]
   }[]
 }) {
+  const session = useSession();
+  const role = session.data?.user.role
+
+  const filterData = items.filter((item) => {
+    if (role === "LEADER") {
+      return item
+    } else {
+      return item.access === "EMPLOYE";
+    }
+  })
+
   return (
     <SidebarGroup>
       <SidebarGroupLabel></SidebarGroupLabel>
       <SidebarMenu>
-        {items.map((item) => (
+        {filterData.map((item) => (
           <Collapsible key={item.title} asChild defaultOpen={item.isActive}>
             <SidebarMenuItem>
               <SidebarMenuButton asChild tooltip={item.title}>
@@ -74,5 +87,5 @@ export function NavMain({
         ))}
       </SidebarMenu>
     </SidebarGroup>
-  )
+  );
 }

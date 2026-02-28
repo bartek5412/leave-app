@@ -229,7 +229,7 @@ export default function PendigRowActions({
           </DropdownMenuItem>
           <DropdownMenuItem
             onClick={() => handleStatusChange("REJECTED")}
-            className="bg-red-700 text-white focus:bg-red-600 focus:text-white mt-2"
+            className="bg-red-700 text-white focus:bg-red-700/90 focus:text-white mt-2"
           >
             Anuluj urlop
           </DropdownMenuItem>
