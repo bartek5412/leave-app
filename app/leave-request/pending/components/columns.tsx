@@ -1,7 +1,6 @@
 "use client";
 
 import { Badge } from "@/components/ui/badge";
-
 import { ColumnDef } from "@tanstack/react-table";
 import PendigRowActions from "./leaveRequestRowActions";
 import { LeaveRequestFromApi } from "@/lib/types";
@@ -15,7 +14,7 @@ export const columnsPending = (
     cell: ({ row }) => {
       return (
         <div className="text-center">
-          <Badge variant="default">{row.original.status}</Badge>
+          <Badge className="bg-yellow-600">{row.original.status === "PENDING" ? "OCZEKUJĄCY" : null}</Badge>
         </div>
       );
     },

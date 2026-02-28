@@ -39,8 +39,9 @@ async function main() {
       email: "jan.kowalski@example.com",
       firstName: "Jan",
       lastName: "Kowalski",
+      password: "$2b$10$FkL.mZxRGW1k2.WRvMgWJOvaR2yShqmcji6EzgDchIIXmxAwh9IQW",
       role: "EMPLOYEE",
-      availableDays: 20, 
+      availableDays: 20,
       // Pole wymagane przez schema
     },
   });

@@ -21,7 +21,7 @@ export const columnsArchive: ColumnDef<LeaveRequestFromApi>[] = [
     cell: ({ row }) => {
       return (
         <div className="text-center">
-          <Badge variant="default">{row.original.status}</Badge>
+          <Badge className="bg-red-600">{row.original.status === "REJECTED" ? "ANULOWANY" : null}</Badge>
         </div>
       );
     },

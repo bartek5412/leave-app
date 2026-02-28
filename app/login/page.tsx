@@ -7,7 +7,7 @@ export default function Page() {
       style={{ backgroundImage: `url(${img.src})` }}
     >
       <div className="w-full max-w-sm">
-        <LoginForm />
+        <LoginForm  />
       </div>
     </div>
   );

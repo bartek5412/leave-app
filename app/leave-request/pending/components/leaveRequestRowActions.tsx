@@ -1,3 +1,4 @@
+"use client";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -27,7 +28,10 @@ import {
 import { LeaveRequestTypes } from "@/hooks/useLeaveTypes";
 import { MoreHorizontal } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { useSession } from "next-auth/react";
 
 interface PendigRowActionsProps {
   startDate: string;
@@ -46,6 +50,8 @@ export default function PendigRowActions({
   leaveId,
   onSuccess,
 }: PendigRowActionsProps) {
+  const { data: session } = useSession();
+  const role = session?.user?.role;
   const [isEdit, setIsEdit] = useState(false);
   const [isFullDay, setIsFullDay] = useState(false);
   const { leaveType, isLoading } = LeaveRequestTypes();
@@ -97,7 +103,7 @@ export default function PendigRowActions({
       <Dialog open={isEdit} onOpenChange={setIsEdit}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Edytuj wniosek urlopowy</DialogTitle>
+            <DialogTitle>Edytuj wniosek urlopowy </DialogTitle>
           </DialogHeader>
           <div className="grid grid-cols-2 gap-4 items-center justify-center">
             <div className="flex flex-col gap-2">
@@ -212,9 +218,12 @@ export default function PendigRowActions({
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>Akcje</DropdownMenuLabel>
           <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={() => handleStatusChange("APPROVED")}>
-            Akceptuj
-          </DropdownMenuItem>
+          {role === "LEADER" ? (
+            <DropdownMenuItem onClick={() => handleStatusChange("APPROVED")}>
+              Akceptuj
+            </DropdownMenuItem>
+          ) : null}
+
           <DropdownMenuItem onClick={() => setIsEdit(true)}>
             Edytuj urlop
           </DropdownMenuItem>

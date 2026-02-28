@@ -21,7 +21,9 @@ export const columnsAccepted: ColumnDef<LeaveRequestFromApi>[] = [
     cell: ({ row }) => {
       return (
         <div className="text-center">
-          <Badge variant="default">{row.original.status}</Badge>
+          <Badge className="bg-green-600">
+            {row.original.status === "APPROVED" ? "POTWIERDZONY" : null}
+          </Badge>
         </div>
       );
     },
