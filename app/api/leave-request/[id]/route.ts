@@ -7,7 +7,9 @@ export async function PATCH(
 ) {
   try {
     const { id } = await params;
-    const { status } = await request.json();
+    const { status, hours, userId } = await request.json();
+
+    // todo walidacja ilości dostępnych dni urlopowych
     const result = await prisma.$transaction(async (tx) => {
       const leave = await tx.leave.findUnique({
         where: { id },
@@ -20,6 +22,7 @@ export async function PATCH(
           "Wniosek nie może być zaakceptowany, niepoprawny status",
         );
       }
+
       if (status === "APPROVED") {
         await tx.user.update({
           where: { id: leave.userId },
@@ -32,7 +35,7 @@ export async function PATCH(
       return await tx.leave.update({
         where: { id: leave.id },
         data: {
-          status,
+          status: status === "FREE" ? "APPROVED" : "APPROVED",
           acceptedAt: status === "APPROVED" ? new Date() : null,
         },
       });

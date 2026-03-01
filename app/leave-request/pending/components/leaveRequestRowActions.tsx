@@ -62,7 +62,9 @@ export default function PendigRowActions({
     startDate: startDate,
     endDate: endDate,
   });
-  const handleStatusChange = async (newStatus: "APPROVED" | "REJECTED") => {
+  const handleStatusChange = async (
+    newStatus: "APPROVED" | "REJECTED" | "FREE",
+  ) => {
     try {
       const response = await fetch(`/api/leave-request/${leaveId}`, {
         method: "PATCH",
@@ -71,10 +73,11 @@ export default function PendigRowActions({
         },
         body: JSON.stringify({ status: newStatus }),
       });
+      const {message} = await response.json();
       if (response.ok) {
         onSuccess();
       } else {
-        alert("Błąd aktualizacji wniosku");
+        alert(`Błąd aktualizacji wniosku: ${message}`);
       }
     } catch (error) {
       console.error("Błąd", error);
@@ -93,8 +96,10 @@ export default function PendigRowActions({
       } else {
         alert("Błąd aktualizacji wniosku");
       }
+      
     } catch (error) {
       console.error("Błąd", error);
+      
     }
   };
 
@@ -222,8 +227,15 @@ export default function PendigRowActions({
             <DropdownMenuItem onClick={() => handleStatusChange("APPROVED")}>
               Akceptuj
             </DropdownMenuItem>
+          ) : null}{" "}
+          {role === "LEADER" ? (
+            <DropdownMenuItem
+              className=""
+              onClick={() => handleStatusChange("FREE")}
+            >
+              Akceptuj (dodatkowy)
+            </DropdownMenuItem>
           ) : null}
-
           <DropdownMenuItem onClick={() => setIsEdit(true)}>
             Edytuj urlop
           </DropdownMenuItem>
