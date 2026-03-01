@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-export async function getUserRole(id: string) {
+export function getUserRole(id: string) {
   const [role, setRole] = useState<string>("");
 
   useEffect(() => {

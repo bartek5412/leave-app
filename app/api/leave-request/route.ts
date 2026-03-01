@@ -8,7 +8,9 @@ export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const status = searchParams.get("status");
   const session = await getServerSession(authOptions);
-
+  if (!session) {
+    return NextResponse.json({ message: "Brak autoryzacji" }, { status: 401 });
+  }
   const data = await prisma.leave.findMany({
     where: {
       userId: session?.user.role !== "LEADER" ? session?.user.id : undefined,
