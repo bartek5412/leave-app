@@ -2,6 +2,9 @@
 
 Aplikacja do zarzadzania wnioskami urlopowymi stworzona jako projekt portfolio.
 
+![Screen 1 aplikacji](./public/screen1.png)
+![Screen 2 aplikacji](./public/screen2.png)
+
 ## O projekcie
 
 `Leave App` to system, w ktorym:
