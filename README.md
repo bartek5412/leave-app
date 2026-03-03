@@ -94,7 +94,7 @@ NEXTAUTH_URL="http://localhost:3000"
 npm run dev
 ```
 
-Aplikacja bedzie dostepna pod: `http://localhost:3000`
+Aplikacja bedzie dostepna pod: `http://localhost:3000/dashboard`
 
 ## Roadmap / dalszy rozwoj
 
