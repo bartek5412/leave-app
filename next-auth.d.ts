@@ -9,6 +9,7 @@ declare module "next-auth" {
       role: string;
       firstName: string;
       lastName: string;
+      hoursInDay: number;
     } & DefaultSession["user"];
   }
 
@@ -18,6 +19,7 @@ declare module "next-auth" {
     role: string;
     firstName: string;
     lastName: string;
+    hoursInDay: number;
   }
 }
 
@@ -28,5 +30,6 @@ declare module "next-auth/jwt" {
     role: string;
     firstName: string;
     lastName: string;
+    hoursInDay: number;
   }
 }

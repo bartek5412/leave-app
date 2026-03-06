@@ -60,14 +60,14 @@ export default function CalendarSummary({
               </SelectGroup>
             </SelectContent>
           </Select>
-          <Label>Urlop całodniowy</Label>
+          {/* <Label>Urlop całodniowy</Label>
           <div className="flex flex-row items-center gap-4 h-10">
             <Switch checked={isFullDay} onCheckedChange={setIsFullDay} />
             {!isFullDay ? (
               <>
                 <div className="flex flex-row gap-4 items-center">
                   <Label htmlFor="hoursAmount">Ilość godzin</Label>
-                  {/* Kontener relative, który trzyma input i literkę "h" */}
+                 
                   <div className="relative inline-block w-20">
                     <Input
                       
@@ -82,10 +82,10 @@ export default function CalendarSummary({
                       max={8}
                       id="hoursAmount"
                       type="number"
-                      className="w-full pr-6" /* pr-6 robi miejsce z prawej strony na "h" */
+                      className="w-full pr-6" 
                       placeholder="4"
                     />
-                    {/* Absolutnie pozycjonowana literka "h" */}
+                   
                     <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-sm text-gray-500">
                       h
                     </span>
@@ -93,7 +93,7 @@ export default function CalendarSummary({
                 </div>
               </>
             ) : null}
-          </div>
+          </div> */}
           <Label className="">Informacje dodatkowe</Label>
           <Input
             value={payload.description}

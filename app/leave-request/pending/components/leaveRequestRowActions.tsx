@@ -52,6 +52,8 @@ export default function PendigRowActions({
 }: PendigRowActionsProps) {
   const { data: session } = useSession();
   const role = session?.user?.role;
+  const hoursInDayS = session?.user.hoursInDay;
+  const userId = session?.user.id
   const [isEdit, setIsEdit] = useState(false);
   const [isFullDay, setIsFullDay] = useState(false);
   const { leaveType, isLoading } = LeaveRequestTypes();
@@ -61,6 +63,7 @@ export default function PendigRowActions({
     hours: hours,
     startDate: startDate,
     endDate: endDate,
+    hoursInDay: 8,
   });
   const handleStatusChange = async (
     newStatus: "APPROVED" | "REJECTED" | "FREE",
@@ -71,12 +74,13 @@ export default function PendigRowActions({
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ status: newStatus }),
+        body: JSON.stringify({ status: newStatus, hoursInDay: hoursInDayS, userId: userId}),
       });
-      const {message} = await response.json();
+      const { message } = await response.json();
       if (response.ok) {
         onSuccess();
       } else {
+        console.log("Payload:", payload);
         alert(`Błąd aktualizacji wniosku: ${message}`);
       }
     } catch (error) {
@@ -96,12 +100,21 @@ export default function PendigRowActions({
       } else {
         alert("Błąd aktualizacji wniosku");
       }
-      
     } catch (error) {
       console.error("Błąd", error);
-      
     }
   };
+
+  useEffect(() => {
+    const fetchSession = async () => {
+      const hoursInDaySess = hoursInDayS;
+      if (!hoursInDaySess) {
+        return;
+      }
+      setPayload((prev) => ({ ...prev, hoursInDay: hoursInDaySess }));
+    };
+    fetchSession();
+  }, []);
 
   return (
     <div className="text-center">

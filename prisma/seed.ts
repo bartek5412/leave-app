@@ -42,6 +42,7 @@ async function main() {
       password: "$2b$10$FkL.mZxRGW1k2.WRvMgWJOvaR2yShqmcji6EzgDchIIXmxAwh9IQW",
       role: "EMPLOYEE",
       availableDays: 20,
+      hoursInDay: 8
       // Pole wymagane przez schema
     },
   });

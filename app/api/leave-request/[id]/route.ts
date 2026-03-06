@@ -7,15 +7,22 @@ export async function PATCH(
 ) {
   try {
     const { id } = await params;
-    const { status, hours, userId } = await request.json();
-
-    // todo walidacja ilości dostępnych dni urlopowych
+    const { status, hoursInDay, userId } = await request.json();
+    if (!userId) {
+      return NextResponse.json(
+        { message: "Brak autoryzacji" },
+        { status: 401 },
+      );
+    }
     const result = await prisma.$transaction(async (tx) => {
       const leave = await tx.leave.findUnique({
         where: { id },
       });
       if (!leave) {
         throw new Error("Nie znaleziono wniosku urlopowego");
+      }
+      if (!["APPROVED", "PENDING", "REJECTED", "FREE"].includes(status)) {
+        throw new Error("Status wniosku jest nieprawidłowy");
       }
       if (leave.status !== "PENDING") {
         throw new Error(
@@ -24,10 +31,20 @@ export async function PATCH(
       }
 
       if (status === "APPROVED") {
+        const userData = await tx.user.findUnique({ where: { id: userId } });
+        if (!userData) return;
+        const startDate = new Date(leave.startDate).getTime();
+        const endDate = new Date(leave.endDate).getTime();
+        const diff = (endDate - startDate) / (1000 * 60 * 60 * 24) + 1;
+        const summary = diff * hoursInDay;
+        if (userData?.availableDays < summary) {
+          throw new Error("Brak dostępnych dni urlopu");
+        }
+        console.error(summary);
         await tx.user.update({
           where: { id: leave.userId },
           data: {
-            availableDays: { decrement: leave.hours },
+            availableDays: { decrement: summary },
           },
         });
       }

@@ -16,6 +16,7 @@ model User {
   password  String
   firstName String
   lastName  String
+  hoursInDay Int @default(8)
   role      String   @default("EMPLOYEE")
   leaderId  String? 
   availableDays Int

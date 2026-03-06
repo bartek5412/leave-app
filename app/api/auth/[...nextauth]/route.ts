@@ -47,6 +47,7 @@ export const authOptions: NextAuthOptions = {
           role: user.role,
           firstName: user.firstName,
           lastName: user.lastName,
+          hoursInDay: user.hoursInDay,
         };
       },
     }),
@@ -67,6 +68,7 @@ export const authOptions: NextAuthOptions = {
         token.role = user.role;
         token.firstName = user.firstName;
         token.lastName = user.lastName;
+        token.hoursInDay = user.hoursInDay;
       }
       return token; // ZAWSZE musisz zwrócić token!
     },
@@ -77,6 +79,7 @@ export const authOptions: NextAuthOptions = {
         session.user.role = token.role;
         session.user.firstName = token.firstName;
         session.user.lastName = token.lastName;
+        session.user.hoursInDay = token.hoursInDay;
       }
       return session; // ZAWSZE musisz zwrócić sesję!
     },
