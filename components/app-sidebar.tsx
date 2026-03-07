@@ -18,6 +18,14 @@ import { NavMain } from "@/components/nav-main";
 import { NavSecondary } from "@/components/nav-secondary";
 import { NavUser } from "@/components/nav-user";
 import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
@@ -26,7 +34,10 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { access } from "fs";
+import { Label } from "./ui/label";
+import { Input } from "./ui/input";
+import { Textarea } from "./ui/textarea";
+import { Button } from "./ui/button";
 
 const data = {
   user: {
@@ -72,8 +83,8 @@ const data = {
         },
         {
           title: "Lista - Google",
-          url: "/admin-panel/google-calendar"
-        }
+          url: "/admin-panel/google-calendar",
+        },
       ],
     },
     // {
@@ -100,47 +111,80 @@ const data = {
   navSecondary: [
     {
       title: "Wsparcie",
-      url: "#",
+      url: "/support",
       icon: LifeBuoy,
     },
     {
       title: "Zgłoś błąd",
-      url: "#",
+      url: "/ticket",
       icon: Send,
     },
   ],
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const [isSupportDialogOpen, setIsSupportDialogOpen] = React.useState(false);
+
+  const navSecondaryItems = data.navSecondary.map((item) =>
+    item.url === "/ticket"
+      ? {
+          ...item,
+          url: "#",
+          onClick: () => setIsSupportDialogOpen(true),
+        }
+      : item,
+  );
+
   return (
-    <Sidebar variant="inset" {...props}>
-      <SidebarHeader>
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton size="lg" asChild>
-              <a href="#">
-                <div className="bg-white text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
-                  <div className="flex items-center justify-center h-8 w-8 rounded-lg">
-                    <img className=" w-full h-auto" src="/logo.png" />
+    <>
+      <Sidebar variant="inset" {...props}>
+        <SidebarHeader>
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <SidebarMenuButton size="lg" asChild>
+                <a href="/dashboard">
+                  <div className="bg-white text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
+                    <div className="flex items-center justify-center h-8 w-8 rounded-lg">
+                      <img className=" w-full h-auto" src="/logo.png" />
+                    </div>
                   </div>
-                </div>
-                <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-medium whitespace-break-spaces">
-                    Fundacja na rzecz Collegium Polonicum
-                  </span>
-                </div>
-              </a>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        </SidebarMenu>
-      </SidebarHeader>
-      <SidebarContent>
-        <NavMain items={data.navMain} />
-        <NavSecondary items={data.navSecondary} className="mt-auto" />
-      </SidebarContent>
-      <SidebarFooter>
-        <NavUser user={data.user} />
-      </SidebarFooter>
-    </Sidebar>
+                  <div className="grid flex-1 text-left text-sm leading-tight">
+                    <span className="truncate font-medium whitespace-break-spaces">
+                      Fundacja na rzecz Collegium Polonicum
+                    </span>
+                  </div>
+                </a>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          </SidebarMenu>
+        </SidebarHeader>
+        <SidebarContent>
+          <NavMain items={data.navMain} />
+          <NavSecondary items={navSecondaryItems} className="mt-auto" />
+        </SidebarContent>
+        <SidebarFooter>
+          <NavUser user={data.user} />
+        </SidebarFooter>
+      </Sidebar>
+
+      <Dialog open={isSupportDialogOpen} onOpenChange={setIsSupportDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Zgłoś problem z aplikacją</DialogTitle>
+            <DialogDescription className="flex flex-col gap-2">
+
+                <Label>Rodzaj problemu</Label>
+                <Input></Input>
+                <Label>Opis problemu</Label>
+                <Textarea />
+          
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button>Wyślij zgłoszenie</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }

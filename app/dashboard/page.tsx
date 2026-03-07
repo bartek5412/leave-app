@@ -10,6 +10,7 @@ import CalendarSchedule from "./components/CalendarSchedule";
 import CalendarSummary from "./components/CalendarSummary";
 import { useState } from "react";
 import { useSession } from "next-auth/react";
+import { toast } from "sonner";
 
 export interface LeavePayload {
   type: string;
@@ -32,7 +33,8 @@ export default function Page() {
 
   const handleSubmit = async () => {
     if (!payload.startDate || !payload.endDate || !payload.type) {
-      alert("Niepoprawne dane wniosku");
+      toast.warning(`Niepoprawne dane wniosku, nie wybrano daty, lub typu urlopu`, {position: "top-center"
+      });
       return;
     }
     console.log(payload);
@@ -47,7 +49,7 @@ export default function Page() {
       if (!response.ok) {
         throw new Error(`Bład zapytania: ${response.status}`);
       }
-      alert("Poprawnie wysłano wniosek");
+      toast("Poprawnie utworzono wniosek", { position: "top-center" });
       setPayload({
         description: "",
         endDate: null,
@@ -56,7 +58,9 @@ export default function Page() {
         type: "",
       });
     } catch (error) {
-      alert(`Nie udało się przesłać wniosku, bład: ${error}`);
+      toast.warning(`Nie udało się utworzyć wniosku, błąd: ${error}`, {
+        position: "top-center",
+      });
     }
   };
 
