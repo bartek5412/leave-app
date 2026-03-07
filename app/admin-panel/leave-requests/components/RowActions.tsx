@@ -251,40 +251,6 @@ export default function PendigRowActions({
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>Akcje</DropdownMenuLabel>
           <DropdownMenuSeparator />
-          {role === "LEADER" ? (
-            <DropdownMenuItem onClick={() => handleStatusChange("APPROVED")}>
-              Akceptuj
-            </DropdownMenuItem>
-          ) : null}{" "}
-          <AlertDialog>
-            <AlertDialogTrigger asChild>
-              {role === "LEADER" ? (
-                <DropdownMenuItem
-                  className=""
-                  onSelect={(e) => e.preventDefault()}
-                >
-                  Akceptuj (dodatkowy)
-                </DropdownMenuItem>
-              ) : null}
-            </AlertDialogTrigger>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>Czy jesteś pewien?</AlertDialogTitle>
-                <AlertDialogDescription>
-                  Ta operacja sprawi że ilość dni nie zostanie pobrana z puli użytkownika, czy mimo to chcesz to zrobić?
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel>Wróć</AlertDialogCancel>
-                <AlertDialogAction
-                  onClick={() => handleStatusChange("FREE")}
-                  className="bg-yellow-700 text-white hover:bg-yellow-700/90 focus:text-white"
-                >
-                  Potwierdz urlop darmowy
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
           <DropdownMenuItem onClick={() => setIsEdit(true)}>
             Edytuj urlop
           </DropdownMenuItem>

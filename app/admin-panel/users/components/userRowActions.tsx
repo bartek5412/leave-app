@@ -1,4 +1,15 @@
 "use client";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -231,9 +242,31 @@ export default function UserRowActions({
           <DropdownMenuItem onClick={() => setIsEdit(true)}>
             Edytuj użytkownika
           </DropdownMenuItem>
-          <DropdownMenuItem className="bg-red-700 text-white focus:bg-red-600 focus:text-white mt-2">
-            Usuń użytkownika
-          </DropdownMenuItem>
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              {/* DODAJ onSelect={(e) => e.preventDefault()} TUTAJ */}
+              <DropdownMenuItem
+                className="bg-red-700 text-white focus:bg-red-700/90 focus:text-white mt-2"
+                onSelect={(e) => e.preventDefault()}
+              >
+                Usuń użytkownika
+              </DropdownMenuItem>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Czy jesteś pewien?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Tej operacji nie można cofnąć, czy jesteś pewien że chcesz usunąć tego użytkownika?
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Wróć</AlertDialogCancel>
+                <AlertDialogAction className="bg-red-700 text-white hover:bg-red-700/90 focus:text-white">
+                  Usuń użytkownika
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </DropdownMenuContent>
       </DropdownMenu>
     </div>

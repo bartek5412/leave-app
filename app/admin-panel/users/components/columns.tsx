@@ -16,17 +16,6 @@ import UserRowActions from "./userRowActions";
 export const columnsUser = (
   refreshData: () => void,
 ): ColumnDef<UserRequestFromApi>[] => [
-  // {
-  //   accessorKey: "id",
-  //   header: () => <div className="text-center">ID</div>,
-  //   cell: ({ row }) => {
-  //     return (
-  //       <div className="text-center">
-  //         <div className="text-center">{row.original.id}</div>
-  //       </div>
-  //     );
-  //   },
-  // },
   {
     accessorKey: "firstName",
     header: () => <div className="text-center">Imię</div>,
@@ -77,7 +66,7 @@ export const columnsUser = (
     cell: ({ row }) => {
       return (
         <div className="text-center">
-          <div className="text-center">{row.original.leaderId}</div>
+          <div className="text-center">{row.original.leader.firstName} {row.original.leader.lastName}</div>
         </div>
       );
     },

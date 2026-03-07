@@ -1,3 +1,4 @@
+import { createCalendarEvent } from "@/lib/googleCalendar";
 import { prisma } from "@/lib/prisma";
 import { getWorkingDays } from "@/lib/utils";
 import { NextResponse } from "next/server";
@@ -15,9 +16,12 @@ export async function PATCH(
         { status: 401 },
       );
     }
+    const userName = await prisma.user.findUnique({ where: { id: userId } });
+    if (!userName) return;
     const result = await prisma.$transaction(async (tx) => {
       const leave = await tx.leave.findUnique({
         where: { id },
+        include: { leaveType: true },
       });
       if (!leave) {
         throw new Error("Nie znaleziono wniosku urlopowego");
@@ -47,7 +51,16 @@ export async function PATCH(
           },
         });
       }
-
+      try {
+        await createCalendarEvent(
+          `Urlop - ${userName.firstName} ${userName.lastName}`,
+          leave.leaveType.name,
+          new Date(leave.startDate),
+          new Date(leave.endDate),
+        );
+      } catch (calendarError) {
+        console.error(calendarError);
+      }
       return await tx.leave.update({
         where: { id: leave.id },
         data: {

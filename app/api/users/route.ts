@@ -7,6 +7,7 @@ export async function GET(request: Response) {
   const role = searchParams.get("role");
   const users = await prisma.user.findMany({
     where: { role: role || undefined },
+    include: { leader: true },
   });
   return NextResponse.json(users);
 }

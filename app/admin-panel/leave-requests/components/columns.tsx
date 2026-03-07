@@ -1,5 +1,6 @@
 "use client";
 
+import PendigRowActions from "@/app/leave-request/pending/components/leaveRequestRowActions";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -13,8 +14,11 @@ import {
 import { LeaveRequestFromApi } from "@/lib/types";
 import { ColumnDef } from "@tanstack/react-table";
 import { MoreHorizontal } from "lucide-react";
+import AdminLeaveRowActions from "./RowActions";
 
-export const columnsArchive: ColumnDef<LeaveRequestFromApi>[] = [
+
+
+export const columnsArchive = (onSuccess: () => void): ColumnDef<LeaveRequestFromApi>[] => [
   {
     accessorKey: "Status",
     header: () => <div className="text-center">Status</div>,
@@ -71,7 +75,7 @@ export const columnsArchive: ColumnDef<LeaveRequestFromApi>[] = [
     cell: ({ row }) => {
       return (
         <div className="text-center font-medium">
-          {row.original.user?.firstName} {row.original.user.lastName} 
+          {row.original.user?.firstName} {row.original.user.lastName}
         </div>
       );
     },
@@ -92,22 +96,14 @@ export const columnsArchive: ColumnDef<LeaveRequestFromApi>[] = [
 
       return (
         <div className="text-center">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-8 w-8 p-0">
-                <span className="sr-only">Otwórz menu</span>
-                <MoreHorizontal className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuLabel>Akcje</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem>Edytuj urlop</DropdownMenuItem>
-              <DropdownMenuItem className="bg-red-700 text-white focus:bg-red-600 focus:text-white mt-2">
-                Anuluj urlop
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <AdminLeaveRowActions
+            hours={row.original.hours}
+            startDate={row.original.startDate}
+            endDate={row.original.endDate}
+            type={row.original.leaveType.id}
+            leaveId={row.original.id}
+            onSuccess={onSuccess}
+          />
         </div>
       );
     },

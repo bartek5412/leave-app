@@ -1,30 +1,30 @@
 "use client";
 import { AppSidebar } from "@/components/app-sidebar";
+import { DataTable } from "@/components/data-table";
 import { Separator } from "@/components/ui/separator";
 import {
   SidebarInset,
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
-import { columnsArchive } from "./components/columns";
-import { DataTable } from "@/components/data-table";
+import { GoogleCalendarEvent } from "@/lib/types";
 import { useEffect, useState } from "react";
-import { LeaveRequestFromApi } from "@/lib/types";
+import { columnsGoogleEvents } from "./components/columns";
 
-export default function LeaveRequestSummary() {
-  const [fetchData, setFetchData] = useState<LeaveRequestFromApi[] | null>(
+export default function GoogleCalendarEvents() {
+  const [fetchData, setFetchData] = useState<GoogleCalendarEvent[] | null>(
     null,
   );
   const [isLoading, setIsLoading] = useState(true);
 
-  const featchLeaves = async () => {
+  const fetchLeaves = async () => {
     try {
       setIsLoading(true);
-      const res = await fetch("/api/leave-request");
+      const res = await fetch("/api/calendar");
       if (!res.ok) {
         throw new Error("Błąd zapytania");
       }
-      const resData: LeaveRequestFromApi[] = await res.json();
+      const resData: GoogleCalendarEvent[] = await res.json();
       setFetchData(resData);
     } catch (error) {
       console.error("Fetch error", error);
@@ -34,9 +34,8 @@ export default function LeaveRequestSummary() {
   };
 
   useEffect(() => {
-    featchLeaves();
+    fetchLeaves();
   }, []);
-
   return (
     <SidebarProvider>
       <AppSidebar />
@@ -50,7 +49,7 @@ export default function LeaveRequestSummary() {
             />
           </div>
           <div className="flex flex-row w-full items-center gap-4 justify-between mx-4">
-            <span className="">Zarządzanie urlopami </span>
+            <span className="">Lista urlopów - kalendarz google</span>
           </div>
           {/* <Breadcrumb>
             <BreadcrumbList>
@@ -85,7 +84,7 @@ export default function LeaveRequestSummary() {
           {/* Kontener UserList: flex-1 i min-h-0 to klucz do działania ScrollArea */}
           <div className="bg-muted/50 flex-1 rounded-xl min-h-0 flex flex-col overflow-hidden">
             <DataTable
-              columns={columnsArchive(featchLeaves)}
+              columns={columnsGoogleEvents(fetchLeaves)}
               data={fetchData ?? []}
               isLoading={isLoading}
             />

@@ -70,6 +70,10 @@ const data = {
           title: "Lista urlopów",
           url: "/admin-panel/leave-requests",
         },
+        {
+          title: "Lista - Google",
+          url: "/admin-panel/google-calendar"
+        }
       ],
     },
     // {

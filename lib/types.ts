@@ -40,4 +40,65 @@ export type UserRequestFromApi = {
   leaderId: string;
   availableDays: number;
   hoursInDay: number;
+  leader: {
+    firstName: string;
+    lastName: string;
+  };
 };
+
+export interface CalendarEvent {
+  id: string;
+  summary?: string;
+  description?: string;
+  start?: {
+    date?: string; // Występuje, gdy wydarzenie jest całodniowe (np. urlop)
+    dateTime?: string; // Występuje, gdy wydarzenie ma konkretne godziny
+    timeZone?: string;
+  };
+  end?: {
+    date?: string;
+    dateTime?: string;
+    timeZone?: string;
+  };
+}
+
+export interface GoogleCalendarEvent {
+  kind: string;
+  etag: string;
+  id: string;
+  status: string;
+  htmlLink: string;
+  created: string;
+  updated: string;
+  summary: string;
+  description?: string;
+  creator: {
+    email: string;
+  };
+  organizer: {
+    email: string;
+    displayName?: string;
+    self?: boolean;
+  };
+  start: {
+    date?: string; // Używane dla wydarzeń całodniowych w formacie YYYY-MM-DD
+    dateTime?: string; // Używane dla wydarzeń z konkretną godziną
+    timeZone?: string;
+  };
+  end: {
+    date?: string;
+    dateTime?: string;
+    timeZone?: string;
+  };
+  iCalUID: string;
+  sequence: number;
+  reminders: {
+    useDefault: boolean;
+    overrides?: Array<{
+      // Opcjonalna tablica, gdy useDefault to false
+      method: string;
+      minutes: number;
+    }>;
+  };
+  eventType: string;
+}
