@@ -32,11 +32,12 @@ export type LeaveRequestFromApi = {
 };
 
 export type UserRequestFromApi = {
+  id: string;
   firstName: string;
   lastName: string;
   email: string;
   role: string;
   leaderId: string;
   availableDays: number;
-}
-
+  hoursInDay: number;
+};

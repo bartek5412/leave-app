@@ -1,13 +1,5 @@
 "use client";
 import { AppSidebar } from "@/components/app-sidebar";
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
 import { Separator } from "@/components/ui/separator";
 import {
   SidebarInset,
@@ -15,7 +7,6 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import UserList from "./components/UserList";
-import { Button } from "@/components/ui/button";
 
 export default function AdminPanel() {
   return (
@@ -32,7 +23,6 @@ export default function AdminPanel() {
           </div>
           <div className="flex flex-row w-full items-center gap-4 justify-between mx-4">
             <span className="">Zarządzanie użytkownikami </span>
-            <Button className="">Dodaj użytkownika</Button>
           </div>
           {/* <Breadcrumb>
             <BreadcrumbList>

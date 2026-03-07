@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import { getWorkingDays } from "@/lib/utils";
 import { NextResponse } from "next/server";
 
 export async function PATCH(
@@ -33,10 +34,8 @@ export async function PATCH(
       if (status === "APPROVED") {
         const userData = await tx.user.findUnique({ where: { id: userId } });
         if (!userData) return;
-        const startDate = new Date(leave.startDate).getTime();
-        const endDate = new Date(leave.endDate).getTime();
-        const diff = (endDate - startDate) / (1000 * 60 * 60 * 24) + 1;
-        const summary = diff * hoursInDay;
+        const workingDays = getWorkingDays(leave.startDate, leave.endDate);
+        const summary = workingDays * hoursInDay;
         if (userData?.availableDays < summary) {
           throw new Error("Brak dostępnych dni urlopu");
         }

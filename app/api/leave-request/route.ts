@@ -30,7 +30,6 @@ export async function POST(request: Request) {
   try {
     const body: LeavePayload = await request.json();
     const session = await getServerSession(authOptions);
-    console.log(session?.user.id);
     const { description, hours, type, startDate, endDate } = body;
     if (!type || !startDate || !endDate || !session?.user.id) {
       return NextResponse.json(

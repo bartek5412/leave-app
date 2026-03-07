@@ -11,8 +11,22 @@ import {
 import { UserRequestFromApi } from "@/lib/types";
 import { ColumnDef } from "@tanstack/react-table";
 import { MoreHorizontal } from "lucide-react";
+import UserRowActions from "./userRowActions";
 
-export const columnsUser: ColumnDef<UserRequestFromApi>[] = [
+export const columnsUser = (
+  refreshData: () => void,
+): ColumnDef<UserRequestFromApi>[] => [
+  // {
+  //   accessorKey: "id",
+  //   header: () => <div className="text-center">ID</div>,
+  //   cell: ({ row }) => {
+  //     return (
+  //       <div className="text-center">
+  //         <div className="text-center">{row.original.id}</div>
+  //       </div>
+  //     );
+  //   },
+  // },
   {
     accessorKey: "firstName",
     header: () => <div className="text-center">Imię</div>,
@@ -68,6 +82,19 @@ export const columnsUser: ColumnDef<UserRequestFromApi>[] = [
       );
     },
   },
+  {
+    accessorKey: "hoursInDay",
+    header: () => (
+      <div className="text-center">Ilość godzin w dniu roboczym</div>
+    ),
+    cell: ({ row }) => {
+      return (
+        <div className="text-center">
+          <div className="text-center">{row.original.hoursInDay}</div>
+        </div>
+      );
+    },
+  },
 
   {
     accessorKey: "days",
@@ -84,28 +111,18 @@ export const columnsUser: ColumnDef<UserRequestFromApi>[] = [
     id: "actions",
     header: () => <div className="text-center">Akcje</div>,
     cell: ({ row }) => {
-      const payment = row.original;
-
       return (
-        <div className="text-center">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-8 w-8 p-0">
-                <span className="sr-only">Otwórz menu</span>
-                <MoreHorizontal className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuLabel>Akcje</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-
-              <DropdownMenuItem>Edytuj użytkownika</DropdownMenuItem>
-              <DropdownMenuItem className="bg-red-700 text-white focus:bg-red-600 focus:text-white mt-2">
-                Usuń użytkownika
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
+        <UserRowActions
+          refreshData={refreshData}
+          id={row.original.id}
+          avaibleDays={row.original.availableDays}
+          email={row.original.email}
+          firstName={row.original.firstName}
+          lastName={row.original.lastName}
+          role={row.original.role}
+          leader={row.original.leaderId}
+          hoursInDay={row.original.hoursInDay}
+        />
       );
     },
   },

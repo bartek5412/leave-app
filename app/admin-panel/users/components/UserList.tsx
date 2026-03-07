@@ -1,45 +1,50 @@
-"use client"
+"use client";
 import { DataTable } from "@/components/data-table";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { columnsUser } from "./columns";
 import { useEffect, useState } from "react";
 import { UserRequestFromApi } from "@/lib/types";
+import { Button } from "@/components/ui/button";
 
 export default function UserList() {
   const [fetchData, setFetchData] = useState<UserRequestFromApi[] | null>(null);
-  const [isLoading, setIsLoading] = useState(true)
+  const [isLoading, setIsLoading] = useState(true);
+
+  const refreshData = async () => {
+    try {
+      setIsLoading(true);
+      const response = await fetch("/api/users");
+      if (!response.ok) {
+        throw new Error("Błąd zapytania");
+      }
+      const resData: UserRequestFromApi[] = await response.json();
+      setFetchData(resData);
+    } catch (error) {
+      console.error("Fetch error", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
-    async function fetchData() {
-      try {
-        setIsLoading(true);
-        const response = await fetch("/api/users");
-        if (!response.ok) {
-          throw new Error("Błąd zapytania")
-        }
-        const resData: UserRequestFromApi[] = await response.json();
-        setFetchData(resData);
-      } catch (error) {
-        console.error("Fetch error", error)
-      } finally {
-        setIsLoading(false);
-      }
-    }
-    fetchData();
-  },[])
+    refreshData();
+  }, []);
 
   return (
     <Card className="flex flex-col h-full">
-      <CardHeader className="shrink-0">Lista użytkowników</CardHeader>
+      <CardHeader className="shrink-0">
+        <div className="flex flex-row justify-between">
+          <p>Lista użytkowników</p>
+          <Button>Dodaj użytkownika</Button>
+        </div>
+      </CardHeader>
       <CardContent className="flex-1 min-h-0 p-0">
         <DataTable
           isLoading={isLoading}
           data={fetchData ?? []}
-          columns={columnsUser}
+          columns={columnsUser(refreshData)}
         />
-
       </CardContent>
-
     </Card>
   );
 }
