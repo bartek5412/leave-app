@@ -38,6 +38,7 @@ import { Label } from "./ui/label";
 import { Input } from "./ui/input";
 import { Textarea } from "./ui/textarea";
 import { Button } from "./ui/button";
+import TicketForm from "./ticketForm";
 
 const data = {
   user: {
@@ -167,24 +168,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         </SidebarFooter>
       </Sidebar>
 
-      <Dialog open={isSupportDialogOpen} onOpenChange={setIsSupportDialogOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Zgłoś problem z aplikacją</DialogTitle>
-            <DialogDescription className="flex flex-col gap-2">
-
-                <Label>Rodzaj problemu</Label>
-                <Input></Input>
-                <Label>Opis problemu</Label>
-                <Textarea />
-          
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
-            <Button>Wyślij zgłoszenie</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <TicketForm
+        open={isSupportDialogOpen}
+        onOpenChange={setIsSupportDialogOpen}
+      />
     </>
   );
 }

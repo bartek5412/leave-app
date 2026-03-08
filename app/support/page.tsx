@@ -26,7 +26,7 @@ export default function TicketPage() {
             />
           </div>
           <div className="flex flex-row w-full items-center gap-4 justify-between mx-4">
-            <span className="">Zgłoszenia</span>
+            <span className="">Wsparcie</span>
           </div>
           {/* <Breadcrumb>
             <BreadcrumbList>
