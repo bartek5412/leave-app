@@ -81,9 +81,9 @@ export async function PATCH(
   }
 }
 
-export async function PUT(response: Response) {
+export async function PUT(request: Request) {
   try {
-    const body = await response.json();
+    const body = await request.json();
     const { id, hours, startDate, endDate, type } = body;
     if (!id || !hours || !startDate || !endDate || !type) {
       return NextResponse.json(

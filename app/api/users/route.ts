@@ -2,7 +2,7 @@ import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 import { NextResponse } from "next/server";
 
-export async function GET(request: Response) {
+export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const role = searchParams.get("role");
   const users = await prisma.user.findMany({
@@ -11,7 +11,7 @@ export async function GET(request: Response) {
   });
   return NextResponse.json(users);
 }
-export async function POST(request: Response) {
+export async function POST(request: Request) {
   try {
     const payload = await request.json();
     const { email, firstName, lastName, password, passwordRepeat } = payload;

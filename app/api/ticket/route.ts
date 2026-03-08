@@ -1,9 +1,9 @@
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 
-export async function POST(response: Response) {
+export async function POST(request: Request) {
   try {
-    const { title, message, userId } = await response.json();
+    const { title, message, userId } = await request.json();
     if (!title || !message || !userId) {
       return NextResponse.json(
         { message: "Brak wymaganych danych do stworzenia zgłoszenia" },
