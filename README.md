@@ -14,13 +14,6 @@ Leave App supports the main HR workflow:
 - the system tracks leave balances and request statuses,
 - approved requests can be synced to Google Calendar.
 
-## Current status
-
-Codebase review and lint check were run on **March 7, 2026**.
-
-- `npm run lint` currently fails.
-- Reported issues: **13 errors** and **91 warnings**.
-- Most issues are related to hook usage rules, `any` types, and unused imports/variables.
 
 ## Main features
 
@@ -128,9 +121,4 @@ App URLs:
 - Email: `jan.kowalski@example.com`
 - Password: `1234`
 
-## Notes
-
-- `/` is still the default Next.js starter page.
-- Some UI texts are still in Polish.
-- There is an inconsistency in role naming in code (`EMPLOYEE` vs `EMPLOYE`) that should be unified.
 
