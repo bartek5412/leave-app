@@ -14,7 +14,9 @@ export const columnsPending = (
     cell: ({ row }) => {
       return (
         <div className="text-center">
-          <Badge className="bg-yellow-600">{row.original.status === "PENDING" ? "OCZEKUJĄCY" : null}</Badge>
+          <Badge className="bg-yellow-600">
+            {row.original.status === "PENDING" ? "OCZEKUJĄCY" : null}
+          </Badge>
         </div>
       );
     },
@@ -54,6 +56,17 @@ export const columnsPending = (
     cell: ({ row }) => {
       return (
         <div className="text-center font-medium">{row.original.hours}</div>
+      );
+    },
+  },
+  {
+    accessorKey: "user",
+    header: () => <div className="text-center">Użytkownik</div>,
+    cell: ({ row }) => {
+      return (
+        <div className="text-center font-medium">
+          {row.original.user.firstName} {row.original.user.lastName}
+        </div>
       );
     },
   },

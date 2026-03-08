@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import img from "@/public/header.jpg";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { toast } from "sonner";
 
 type RegisterUserPayload = {
   email: string;
@@ -28,7 +29,7 @@ export default function RegisterPage() {
   const handleSubmit = async () => {
     try {
       if (payload.password !== payload.passwordRepeat) {
-        alert("Hasła nie są identyczne");
+        toast.warning("Hasła nie są identyczne", { position: "top-center" });
         return;
       }
 
@@ -39,7 +40,9 @@ export default function RegisterPage() {
       });
       const { message } = await response.json();
       if (!response.ok) {
-        alert(`Błąd tworzenia uzytkownika: ${message}`);
+        toast.error(`Błąd tworzenia uzytkownika: ${message}`, {
+          position: "top-center",
+        });
         return;
       }
       setPayload({
@@ -51,7 +54,7 @@ export default function RegisterPage() {
       });
       router.push("/login");
     } catch (error) {
-      alert(`Błąd: ${error}`);
+      toast.error(`Błąd: ${error}`, { position: "top-center" });
     }
   };
 
@@ -96,6 +99,7 @@ export default function RegisterPage() {
               />
               <Label>Hasło</Label>
               <Input
+                
                 type="password"
                 value={payload.password}
                 onChange={(e) =>

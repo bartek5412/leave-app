@@ -2,29 +2,15 @@
 
 import * as React from "react";
 import {
-  BookOpen,
-  Bot,
-  Command,
-  Frame,
+  CalendarDays,
   LifeBuoy,
-  Map,
-  PieChart,
   Send,
-  Settings2,
-  SquareTerminal,
+  UserCog,
 } from "lucide-react";
 
 import { NavMain } from "@/components/nav-main";
 import { NavSecondary } from "@/components/nav-secondary";
 import { NavUser } from "@/components/nav-user";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 import {
   Sidebar,
   SidebarContent,
@@ -34,10 +20,6 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { Label } from "./ui/label";
-import { Input } from "./ui/input";
-import { Textarea } from "./ui/textarea";
-import { Button } from "./ui/button";
 import TicketForm from "./ticketForm";
 
 const data = {
@@ -51,7 +33,7 @@ const data = {
       access: "EMPLOYE",
       title: "Wnioski urlopowe",
       url: "/dashboard",
-      icon: SquareTerminal,
+      icon: CalendarDays,
       isActive: true,
       items: [
         {
@@ -71,7 +53,7 @@ const data = {
     {
       title: "Panel administratora",
       url: "#",
-      icon: Bot,
+      icon: UserCog,
       isActive: true,
       items: [
         {

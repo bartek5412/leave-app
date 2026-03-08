@@ -40,6 +40,7 @@ import {
 import { getLeaders, getUserData } from "@/hooks/useUserRole";
 import { MoreHorizontal } from "lucide-react";
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 interface UserRowActionsProps {
   id: string;
@@ -84,11 +85,11 @@ export default function UserRowActions({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
-      if (!response.ok) alert("Błąd edycji wniosku");
+      if (!response.ok) toast.error("Błąd edycji wniosku", { position: "top-center" });
       setIsEdit(false);
       refreshData();
     } catch (error) {
-      alert(`Błąd: ${error}`);
+      toast.error(`Błąd: ${error}`, { position: "top-center" });
     }
   };
 

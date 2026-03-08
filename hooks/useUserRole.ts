@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 export interface LeaderOptions {
   id: string;
@@ -28,7 +29,7 @@ export function getLeaders() {
         setErrorLeaderData(null);
         const response = await fetch(`/api/users?role=LEADER`);
         if (!response.ok) {
-          alert("Błąd zapytania");
+          toast.error("Błąd zapytania", { position: "top-center" });
         }
         const data = await response.json();
         setLeaderData(data);
@@ -56,7 +57,7 @@ export function getUserData(id: string) {
         setIsError(null);
         const response = await fetch(`/api/users/${id}`);
         if (!response.ok) {
-          alert("Błąd zapytania");
+          toast.error("Błąd zapytania", { position: "top-center" });
         }
         const responseData = await response.json();
         setUserData(responseData);

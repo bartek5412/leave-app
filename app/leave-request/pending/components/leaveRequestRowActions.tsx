@@ -43,6 +43,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { toast } from "sonner";
 
 interface PendigRowActionsProps {
   startDate: string;
@@ -96,7 +97,9 @@ export default function PendigRowActions({
         onSuccess();
       } else {
         console.log("Payload:", payload);
-        alert(`Błąd aktualizacji wniosku: ${message}`);
+        toast.error(`Błąd aktualizacji wniosku: ${message}`, {
+          position: "top-center",
+        });
       }
     } catch (error) {
       console.error("Błąd", error);
@@ -113,7 +116,7 @@ export default function PendigRowActions({
         onSuccess();
         setIsEdit(false);
       } else {
-        alert("Błąd aktualizacji wniosku");
+        toast.error("Błąd aktualizacji wniosku", { position: "top-center" });
       }
     } catch (error) {
       console.error("Błąd", error);

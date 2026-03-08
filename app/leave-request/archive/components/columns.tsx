@@ -21,7 +21,9 @@ export const columnsArchive: ColumnDef<LeaveRequestFromApi>[] = [
     cell: ({ row }) => {
       return (
         <div className="text-center">
-          <Badge className="bg-red-600">{row.original.status === "REJECTED" ? "ANULOWANY" : null}</Badge>
+          <Badge className="bg-red-600">
+            {row.original.status === "REJECTED" ? "ANULOWANY" : null}
+          </Badge>
         </div>
       );
     },
@@ -51,6 +53,17 @@ export const columnsArchive: ColumnDef<LeaveRequestFromApi>[] = [
       return (
         <div className="text-center font-medium">
           {row.original.leaveType?.name}
+        </div>
+      );
+    },
+  },
+  {
+    accessorKey: "user",
+    header: () => <div className="text-center">Użytkownik</div>,
+    cell: ({ row }) => {
+      return (
+        <div className="text-center font-medium">
+          {row.original.user.firstName} {row.original.user.lastName}
         </div>
       );
     },

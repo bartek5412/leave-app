@@ -48,7 +48,9 @@ export default function TicketForm({ open, onOpenChange }: TicketFormProps) {
         }),
       });
       if (!response.ok) {
-        toast.warning("Błąd podczas tworzenia zgłoszenia");
+        toast.warning("Błąd podczas tworzenia zgłoszenia", {
+          position: "top-center",
+        });
       }
       setTicketPayload({
         message: "",
@@ -58,7 +60,7 @@ export default function TicketForm({ open, onOpenChange }: TicketFormProps) {
       onOpenChange(false);
       toast("Poprawnie utworzono zgłoszenie", { position: "top-center" });
     } catch (err) {
-      toast.warning(`Błąd ${err}`);
+      toast.warning(`Błąd ${err}`, { position: "top-center" });
     }
   };
 

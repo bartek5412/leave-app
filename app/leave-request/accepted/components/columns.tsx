@@ -57,6 +57,17 @@ export const columnsAccepted: ColumnDef<LeaveRequestFromApi>[] = [
       );
     },
   },
+  {
+    accessorKey: "user",
+    header: () => <div className="text-center">Użytkownik</div>,
+    cell: ({ row }) => {
+      return (
+        <div className="text-center font-medium">
+          {row.original.user.firstName} {row.original.user.lastName}
+        </div>
+      );
+    },
+  },
   // {
   //   id: "actions",
   //   header: () => <div className="text-center">Akcje</div>,

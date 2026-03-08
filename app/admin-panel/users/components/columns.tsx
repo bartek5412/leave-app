@@ -65,8 +65,8 @@ export const columnsUser = (
     header: () => <div className="text-center">Kierownik</div>,
     cell: ({ row }) => {
       return (
-        <div className="text-center">
-          <div className="text-center">{row.original.leader.firstName} {row.original.leader.lastName}</div>
+        <div className="text-center">{row.original.leader ? <div className="text-center">{row.original.leader.firstName} {row.original.leader.lastName}</div>: "Brak przełożonego"}
+          
         </div>
       );
     },
@@ -79,7 +79,7 @@ export const columnsUser = (
     cell: ({ row }) => {
       return (
         <div className="text-center">
-          <div className="text-center">{row.original.hoursInDay}</div>
+          <div className="text-center">{row.original.hoursInDay} h</div>
         </div>
       );
     },
@@ -91,7 +91,7 @@ export const columnsUser = (
     cell: ({ row }) => {
       return (
         <div className="text-center">
-          <div className="text-center">{row.original.availableDays}</div>
+          <div className="text-center">{row.original.availableDays} h</div>
         </div>
       );
     },
