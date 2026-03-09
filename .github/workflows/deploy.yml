@@ -19,7 +19,7 @@ jobs:
           node-version: 20
           cache: npm
 
-      - name: Build app
+      - name: Build app (Local)
         env:
           NODE_ENV: production
           NEXT_TELEMETRY_DISABLED: "1"
@@ -32,51 +32,56 @@ jobs:
       - name: Setup SSH Key
         run: |
           mkdir -p ~/.ssh/
-          
-          # DEKODOWANIE KLUCZA Z BASE64 DO PLIKU
           echo "${{ secrets.VPS_SSH_KEY }}" | base64 -d > ~/.ssh/id_rsa
-          
-          # Ustawienie uprawnień (krytyczne!)
           chmod 600 ~/.ssh/id_rsa
-          
-          # Debugowanie (sprawdzamy czy klucz wygląda poprawnie, nie pokazując go)
-          echo "Klucz wgrany. Pierwsza linia:"
-          head -n 1 ~/.ssh/id_rsa
-          
-          # Wyłączenie sprawdzania hosta (dla uproszczenia w CI)
           echo -e "Host *\n\tStrictHostKeyChecking no\n\tUserKnownHostsFile /dev/null" > ~/.ssh/config
 
       - name: Copy repo via tar pipe
         run: |
-          ssh -v -p 48624 -i ~/.ssh/id_rsa ${{ secrets.VPS_USERNAME }}@${{ secrets.VPS_HOST }} << 'EOF'
-            mkdir -p /www/wwwroot/urlopy-nowe
-          EOF
+          # Tworzymy katalog jako root i nadajemy uprawnienia użytkownikowi SSH, aby tar mógł tam pisać
+          ssh -p 48624 -i ~/.ssh/id_rsa ${{ secrets.VPS_USERNAME }}@${{ secrets.VPS_HOST }} \
+            "sudo mkdir -p /www/wwwroot/urlopy-nowe && sudo chown ${{ secrets.VPS_USERNAME }}:${{ secrets.VPS_USERNAME }} /www/wwwroot/urlopy-nowe"
 
+          # Pakujemy pliki lokalnie i rozpakowujemy na serwerze używając sudo
           tar czf - \
             --exclude=.git \
             --exclude=node_modules \
             --exclude=.next \
             --exclude=dev.db \
             --exclude=prisma/prod.db \
-            . | ssh -v -p 48624 -i ~/.ssh/id_rsa ${{ secrets.VPS_USERNAME }}@${{ secrets.VPS_HOST }} "cd /www/wwwroot/urlopy-nowe && tar xzf -"
+            . | ssh -p 48624 -i ~/.ssh/id_rsa ${{ secrets.VPS_USERNAME }}@${{ secrets.VPS_HOST }} "cd /www/wwwroot/urlopy-nowe && sudo tar xzf -"
 
       - name: Deploy via SSH
         run: |
-          ssh -v -p 48624 -i ~/.ssh/id_rsa ${{ secrets.VPS_USERNAME }}@${{ secrets.VPS_HOST }} << 'EOF'
-            cd /www/wwwroot/urlopy-nowe
+          ssh -p 48624 -i ~/.ssh/id_rsa ${{ secrets.VPS_USERNAME }}@${{ secrets.VPS_HOST }} << 'EOF'
             set -euxo pipefail
-            trap 'echo "Deploy failed. Showing status and logs..." && docker-compose -f docker-compose.prod.yml ps -a || true; docker-compose -f docker-compose.prod.yml logs --no-color --tail=200 || true' ERR
+            cd /www/wwwroot/urlopy-nowe
+
+            # Upewniamy się, że uprawnienia do plików są poprawne dla procesu budowania
+            sudo chown -R ${{ secrets.VPS_USERNAME }}:${{ secrets.VPS_USERNAME }} .
+
+            # Trap dla błędów - pokaże logi jeśli coś pójdzie nie tak
+            trap 'echo "Deploy failed. Showing status and logs..." && sudo docker-compose -f docker-compose.prod.yml ps -a || true; sudo docker-compose -f docker-compose.prod.yml logs --no-color --tail=200 || true' ERR
+
             echo "Stopping existing containers..."
-            docker-compose -f docker-compose.prod.yml down || true
+            sudo docker-compose -f docker-compose.prod.yml down || true
+
             echo "Building image..."
-            docker-compose -f docker-compose.prod.yml build
+            sudo docker-compose -f docker-compose.prod.yml build
+
             echo "Running Prisma migrations..."
-            docker-compose -f docker-compose.prod.yml run --rm -T urlopy-app npm run prisma:migrate </dev/null
+            # Używamy -T (disable pseudo-tty) dla środowisk CI
+            sudo docker-compose -f docker-compose.prod.yml run --rm -T urlopy-app npm run prisma:migrate </dev/null
+
             echo "Running Prisma seed..."
-            docker-compose -f docker-compose.prod.yml run --rm -T urlopy-app npm run prisma:seed </dev/null
+            sudo docker-compose -f docker-compose.prod.yml run --rm -T urlopy-app npm run prisma:seed </dev/null
+
             echo "Starting containers..."
-            docker-compose -f docker-compose.prod.yml up -d --remove-orphans
+            sudo docker-compose -f docker-compose.prod.yml up -d --remove-orphans
+
             echo "Container status:"
-            docker-compose -f docker-compose.prod.yml ps -a
-            docker image prune -f
+            sudo docker-compose -f docker-compose.prod.yml ps -a
+
+            echo "Cleaning up old images..."
+            sudo docker image prune -f
           EOF
