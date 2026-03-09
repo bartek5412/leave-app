@@ -28,8 +28,8 @@ export function LoginForm({
   const router = useRouter();
 
   // 1. Dodajemy stany dla formularza
-  const [email, setEmail] = useState("jan.kowalski@example.com");
-  const [password, setPassword] = useState("1234");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 

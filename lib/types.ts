@@ -102,3 +102,9 @@ export interface GoogleCalendarEvent {
   };
   eventType: string;
 }
+
+export type LeaveTypeFromApi = {
+  id: string;
+  name: string;
+  description: string;
+};

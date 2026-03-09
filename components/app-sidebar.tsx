@@ -68,6 +68,10 @@ const data = {
           title: "Lista - Google",
           url: "/admin-panel/google-calendar",
         },
+        {
+          title: "Typy urlopów",
+          url: "/admin-panel/leave-type",
+        },
       ],
     },
     // {
