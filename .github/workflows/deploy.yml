@@ -42,7 +42,7 @@ jobs:
           ssh -p 48624 -i ~/.ssh/id_rsa ${{ secrets.VPS_USERNAME }}@${{ secrets.VPS_HOST }} \
             "sudo mkdir -p /www/wwwroot/urlopy-nowe && sudo chown ${{ secrets.VPS_USERNAME }}:${{ secrets.VPS_USERNAME }} /www/wwwroot/urlopy-nowe"
 
-          # Pakujemy pliki lokalnie i rozpakowujemy na serwerze używając sudo
+          # Pakujemy pliki lokalnie i rozpakowujemy na serwerze używając sudo (plik .env poleci razem z nimi)
           tar czf - \
             --exclude=.git \
             --exclude=node_modules \
@@ -70,11 +70,12 @@ jobs:
             sudo docker-compose -f docker-compose.prod.yml build
 
             echo "Running Prisma migrations..."
-            # Używamy -T (disable pseudo-tty) dla środowisk CI
-            sudo docker-compose -f docker-compose.prod.yml run --rm -T leave-app npm run prisma:migrate </dev/null
+            # ZMIENIONE: Użycie npx prisma bezpośrednio zamiast npm run
+            sudo docker-compose -f docker-compose.prod.yml run --rm -T leave-app npx prisma migrate deploy </dev/null
 
             echo "Running Prisma seed..."
-            sudo docker-compose -f docker-compose.prod.yml run --rm -T leave-app npm run prisma:seed </dev/null
+            # ZMIENIONE: Użycie npx prisma bezpośrednio zamiast npm run
+            sudo docker-compose -f docker-compose.prod.yml run --rm -T leave-app npx prisma db seed </dev/null
 
             echo "Starting containers..."
             sudo docker-compose -f docker-compose.prod.yml up -d --remove-orphans
