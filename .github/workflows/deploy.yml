@@ -73,9 +73,9 @@ jobs:
             # ZMIENIONE: Użycie npx prisma bezpośrednio zamiast npm run
             sudo docker-compose -f docker-compose.prod.yml run --rm -T leave-app npx prisma migrate deploy </dev/null
 
-            echo "Running Prisma seed..."
+            #echo "Running Prisma seed..."
             # ZMIENIONE: Użycie npx prisma bezpośrednio zamiast npm run
-            sudo docker-compose -f docker-compose.prod.yml run -e npm_config_cache=/tmp --rm -T leave-app npx prisma db seed </dev/null
+            #sudo docker-compose -f docker-compose.prod.yml run -e npm_config_cache=/tmp --rm -T leave-app npx prisma db seed </dev/null
 
             echo "Starting containers..."
             sudo docker-compose -f docker-compose.prod.yml up -d --remove-orphans
