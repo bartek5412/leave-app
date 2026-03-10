@@ -1,6 +1,6 @@
 # Leave App
 
-A full-stack leave request management app built with Next.js, NextAuth, Prisma, and SQLite.
+A full-stack leave request management app built with Next.js, NextAuth, Prisma, and SQLite
 
 ![App screenshot 1](./public/screen1.png)
 ![App screenshot 2](./public/screen2.png)
