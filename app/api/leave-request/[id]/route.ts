@@ -53,6 +53,7 @@ export async function PATCH(
       }
       try {
         await createCalendarEvent(
+          id,
           `Urlop - ${userName.firstName} ${userName.lastName}`,
           leave.leaveType.name,
           new Date(leave.startDate),
@@ -84,13 +85,17 @@ export async function PATCH(
 export async function PUT(request: Request) {
   try {
     const body = await request.json();
-    const { id, hours, startDate, endDate, type } = body;
-    if (!id || !hours || !startDate || !endDate || !type) {
+    const { id, hours, startDate, endDate, type, status } = body;
+    if (!id || !hours || !startDate || !endDate || !type || !status) {
       return NextResponse.json(
         { message: "Brak wymaganych danych" },
         { status: 400 },
       );
     }
+    const finalStatus = status === "ACCEPTED" ? "PENDING" : status;
+
+    //todo dodać usuwanie wniosku z google, dzieki dodaniu id google event
+
     const result = await prisma.leave.update({
       where: { id: id },
       data: {
@@ -100,6 +105,7 @@ export async function PUT(request: Request) {
         endDate: endDate,
         leaveTypeId: type,
         updatedAt: new Date(),
+        status: finalStatus,
       },
     });
     return NextResponse.json(

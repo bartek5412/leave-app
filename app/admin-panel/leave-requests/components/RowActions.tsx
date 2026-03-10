@@ -51,6 +51,7 @@ interface PendigRowActionsProps {
   type: string;
   leaveId: string;
   hours: number;
+  status: string;
   onSuccess: () => void;
 }
 
@@ -60,6 +61,7 @@ export default function PendigRowActions({
   endDate,
   type,
   leaveId,
+  status,
   onSuccess,
 }: PendigRowActionsProps) {
   const { data: session } = useSession();
@@ -76,6 +78,7 @@ export default function PendigRowActions({
     startDate: startDate,
     endDate: endDate,
     hoursInDay: 8,
+    status: status,
   });
   const handleStatusChange = async (
     newStatus: "APPROVED" | "REJECTED" | "FREE",

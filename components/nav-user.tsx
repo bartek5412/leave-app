@@ -6,7 +6,9 @@ import {
   ChevronsUpDown,
   CreditCard,
   LogOut,
+  Moon,
   Sparkles,
+  Sun,
 } from "lucide-react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -26,6 +28,9 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { signOut, useSession } from "next-auth/react";
+import { ModeToggle } from "./themeSwitch";
+import { Button } from "./ui/button";
+import { useTheme } from "next-themes";
 
 export function NavUser({
   user,
@@ -36,6 +41,7 @@ export function NavUser({
     avatar: string;
   };
 }) {
+  const { setTheme, theme } = useTheme();
   const { isMobile } = useSidebar();
   const { data: session } = useSession();
   const logoutFunction = async () => {
@@ -92,6 +98,23 @@ export function NavUser({
                 <Bell />
                 Zmień hasło
               </DropdownMenuItem>
+
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <DropdownMenuItem>
+                    {theme === "dark" ? <Moon /> : <Sun />}
+                    Zmień motyw
+                  </DropdownMenuItem>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" alignOffset={-130}>
+                  <DropdownMenuItem onClick={() => setTheme("light")}>
+                    Jasny
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setTheme("dark")}>
+                    Ciemny
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={() => logoutFunction()}>

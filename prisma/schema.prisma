@@ -42,6 +42,7 @@ model Leave {
   endDate     DateTime 
   hours       Int
   isFree      Boolean
+  googleId    String?
   status      String   @default("PENDING") 
   reason      String?  
   userId      String

@@ -97,6 +97,7 @@ export const columnsArchive = (onSuccess: () => void): ColumnDef<LeaveRequestFro
       return (
         <div className="text-center">
           <AdminLeaveRowActions
+            status={row.original.status}
             hours={row.original.hours}
             startDate={row.original.startDate}
             endDate={row.original.endDate}
