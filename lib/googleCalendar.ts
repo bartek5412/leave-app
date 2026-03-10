@@ -26,15 +26,22 @@ function normalizePrivateKey(privateKey?: string) {
   return normalizedKey;
 }
 
-const auth = new google.auth.GoogleAuth({
-  credentials: {
-    client_email: process.env.GOOGLE_CLIENT_EMAIL,
-    private_key: normalizePrivateKey(process.env.GOOGLE_PRIVATE_KEY),
-  },
-  scopes: ["https://www.googleapis.com/auth/calendar"],
-});
+function getCalendarClient() {
+  const clientEmail = process.env.GOOGLE_CLIENT_EMAIL;
+  const privateKey = normalizePrivateKey(process.env.GOOGLE_PRIVATE_KEY);
 
-const calendar = google.calendar({ version: "v3", auth });
+  if (!clientEmail || !privateKey) {
+    throw new Error("Google Calendar environment variables are missing.");
+  }
+
+  const auth = new google.auth.JWT({
+    email: clientEmail,
+    key: privateKey,
+    scopes: ["https://www.googleapis.com/auth/calendar"],
+  });
+
+  return google.calendar({ version: "v3", auth });
+}
 
 export async function createCalendarEvent(
   summary: string,
@@ -43,6 +50,7 @@ export async function createCalendarEvent(
   endDate: Date,
 ) {
   try {
+    const calendar = getCalendarClient();
     const startString = getLocalYYYYMMDD(startDate);
     const end = new Date(endDate);
     end.setDate(end.getDate() + 1);
@@ -75,6 +83,7 @@ export async function createCalendarEvent(
 
 export async function getAllCallendarEvents() {
   try {
+    const calendar = getCalendarClient();
     const response = await calendar.events.list({
       calendarId: process.env.GOOGLE_CALENDAR_ID,
     });
@@ -87,6 +96,7 @@ export async function getAllCallendarEvents() {
 
 export async function removeEvent(id: string) {
   try {
+    const calendar = getCalendarClient();
     const response = await calendar.events.delete({
       calendarId: process.env.GOOGLE_CALENDAR_ID,
       eventId: id,
