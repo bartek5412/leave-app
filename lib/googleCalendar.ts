@@ -8,10 +8,28 @@ function getLocalYYYYMMDD(date: Date): string {
   return `${year}-${month}-${day}`;
 }
 
+function normalizePrivateKey(privateKey?: string) {
+  if (!privateKey) {
+    return undefined;
+  }
+
+  const normalizedKey = privateKey
+    .trim()
+    .replace(/^"(.*)"$/s, "$1")
+    .replace(/\\n/g, "\n")
+    .replace(/\r\n/g, "\n");
+
+  if (!normalizedKey.includes("BEGIN PRIVATE KEY")) {
+    throw new Error("GOOGLE_PRIVATE_KEY has an invalid format.");
+  }
+
+  return normalizedKey;
+}
+
 const auth = new google.auth.GoogleAuth({
   credentials: {
     client_email: process.env.GOOGLE_CLIENT_EMAIL,
-    private_key: process.env.GOOGLE_PRIVATE_KEY?.replace(/\\n/g, "\n"),
+    private_key: normalizePrivateKey(process.env.GOOGLE_PRIVATE_KEY),
   },
   scopes: ["https://www.googleapis.com/auth/calendar"],
 });

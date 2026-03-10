@@ -1,0 +1,20 @@
+services:
+  leave-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: leave-app
+    env_file:
+      - .env
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      DATABASE_URL: file:/app/data/database.db
+    ports:
+      - "3000:3000"
+    volumes:
+      - leave_app_data:/app/data
+    restart: unless-stopped
+
+volumes:
+  leave_app_data:
