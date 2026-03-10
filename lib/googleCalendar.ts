@@ -15,7 +15,7 @@ function normalizePrivateKey(privateKey?: string) {
 
   const normalizedKey = privateKey
     .trim()
-    .replace(/^"(.*)"$/s, "$1")
+    .replace(/^"([\s\S]*)"$/, "$1")
     .replace(/\\n/g, "\n")
     .replace(/\r\n/g, "\n");
 
