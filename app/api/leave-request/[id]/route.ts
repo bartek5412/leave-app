@@ -1,4 +1,4 @@
-import { createCalendarEvent } from "@/lib/googleCalendar";
+import { createCalendarEvent, removeEvent } from "@/lib/googleCalendar";
 import { prisma } from "@/lib/prisma";
 import { getWorkingDays } from "@/lib/utils";
 import { NextResponse } from "next/server";
@@ -53,6 +53,7 @@ export async function PATCH(
       }
       try {
         await createCalendarEvent(
+          id,
           `Urlop - ${userName.firstName} ${userName.lastName}`,
           leave.leaveType.name,
           new Date(leave.startDate),
@@ -84,13 +85,25 @@ export async function PATCH(
 export async function PUT(request: Request) {
   try {
     const body = await request.json();
-    const { id, hours, startDate, endDate, type } = body;
-    if (!id || !hours || !startDate || !endDate || !type) {
+    const { id, hours, startDate, endDate, type, status, googleId } = body;
+    if (!id || !hours || !startDate || !endDate || !type || !status) {
       return NextResponse.json(
         { message: "Brak wymaganych danych" },
         { status: 400 },
       );
     }
+    const finalStatus = status === "APPROVED" ? "PENDING" : status;
+
+    if (status === "APPROVED") {
+      if (googleId) {
+        try {
+          await removeEvent(googleId);
+        } catch (err) {
+          console.error(err);
+        }
+      }
+    }
+
     const result = await prisma.leave.update({
       where: { id: id },
       data: {
@@ -100,6 +113,7 @@ export async function PUT(request: Request) {
         endDate: endDate,
         leaveTypeId: type,
         updatedAt: new Date(),
+        status: finalStatus,
       },
     });
     return NextResponse.json(

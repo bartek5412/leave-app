@@ -168,7 +168,7 @@ export default function PendigRowActions({
                 }
               />
             </div>
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-2 col-span-2">
               <Label>Typ urlopu</Label>
               <Select
                 disabled={isLoading}
@@ -196,44 +196,7 @@ export default function PendigRowActions({
                 </SelectContent>
               </Select>
             </div>
-            <div className="flex flex-col gap-2">
-              {" "}
-              <div className="flex flex-row gap-2">
-                <Label>Urlop całodniowy</Label>
-                <Switch checked={isFullDay} onCheckedChange={setIsFullDay} />
-              </div>
-              <>
-                <div
-                  className={`flex flex-row gap-4 items-center transition-opacity ${
-                    isFullDay ? "invisible opacity-0" : "visible opacity-100"
-                  }`}
-                >
-                  <Label htmlFor="hoursAmount">Ilość godzin</Label>
-                  {/* Kontener relative, który trzyma input i literkę "h" */}
-                  <div className="relative inline-block w-20">
-                    <Input
-                      value={payload.hours}
-                      onChange={(e) =>
-                        setPayload((prev) => ({
-                          ...prev,
-                          hours: e.target.valueAsNumber,
-                        }))
-                      }
-                      min={0}
-                      max={8}
-                      id="hoursAmount"
-                      type="number"
-                      className="w-full pr-6" /* pr-6 robi miejsce z prawej strony na "h" */
-                      placeholder="4"
-                    />
-                    {/* Absolutnie pozycjonowana literka "h" */}
-                    <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-sm text-gray-500">
-                      h
-                    </span>
-                  </div>
-                </div>
-              </>
-            </div>
+
             <div className="flex flex-col col-span-2 gap-2">
               <Label>Opis</Label>
               <Input placeholder="opcjonalne"></Input>

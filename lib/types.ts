@@ -7,6 +7,7 @@ export type LeaveRequestFromApi = {
   hours: number;
   userId: string;
   leaveTypeId: string;
+  googleId: string;
 
   user: {
     id: string;

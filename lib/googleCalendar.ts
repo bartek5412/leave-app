@@ -1,4 +1,5 @@
 import { google } from "googleapis";
+import { prisma } from "./prisma";
 
 function getLocalYYYYMMDD(date: Date): string {
   const year = date.getFullYear();
@@ -44,6 +45,7 @@ function getCalendarClient() {
 }
 
 export async function createCalendarEvent(
+  id: string,
   summary: string,
   description: string,
   startDate: Date,
@@ -73,6 +75,8 @@ export async function createCalendarEvent(
       calendarId: process.env.GOOGLE_CALENDAR_ID,
       requestBody: event,
     });
+    //todo dodanie id
+    await prisma.leave.update({where: {id: id}, data: {googleId: response.data.id}})
 
     return response.data;
   } catch (error) {
