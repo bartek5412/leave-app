@@ -1,19 +1,8 @@
 "use client";
 
-import PendigRowActions from "@/app/leave-request/pending/components/leaveRequestRowActions";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { LeaveRequestFromApi } from "@/lib/types";
 import { ColumnDef } from "@tanstack/react-table";
-import { MoreHorizontal } from "lucide-react";
 import AdminLeaveRowActions from "./RowActions";
 
 
@@ -97,6 +86,7 @@ export const columnsArchive = (onSuccess: () => void): ColumnDef<LeaveRequestFro
       return (
         <div className="text-center">
           <AdminLeaveRowActions
+            googleId={row.original.googleId}
             status={row.original.status}
             hours={row.original.hours}
             startDate={row.original.startDate}

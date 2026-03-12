@@ -1,4 +1,4 @@
-import { createCalendarEvent } from "@/lib/googleCalendar";
+import { createCalendarEvent, removeEvent } from "@/lib/googleCalendar";
 import { prisma } from "@/lib/prisma";
 import { getWorkingDays } from "@/lib/utils";
 import { NextResponse } from "next/server";
@@ -85,16 +85,24 @@ export async function PATCH(
 export async function PUT(request: Request) {
   try {
     const body = await request.json();
-    const { id, hours, startDate, endDate, type, status } = body;
+    const { id, hours, startDate, endDate, type, status, googleId } = body;
     if (!id || !hours || !startDate || !endDate || !type || !status) {
       return NextResponse.json(
         { message: "Brak wymaganych danych" },
         { status: 400 },
       );
     }
-    const finalStatus = status === "ACCEPTED" ? "PENDING" : status;
+    const finalStatus = status === "APPROVED" ? "PENDING" : status;
 
-    //todo dodać usuwanie wniosku z google, dzieki dodaniu id google event
+    if (status === "APPROVED") {
+      if (googleId) {
+        try {
+          await removeEvent(googleId);
+        } catch (err) {
+          console.error(err);
+        }
+      }
+    }
 
     const result = await prisma.leave.update({
       where: { id: id },

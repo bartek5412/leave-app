@@ -76,7 +76,7 @@ export async function createCalendarEvent(
       requestBody: event,
     });
     //todo dodanie id
-    //const addId = await prisma.leave.update({where: {id: id}, data: {googleId: }})
+    await prisma.leave.update({where: {id: id}, data: {googleId: response.data.id}})
 
     return response.data;
   } catch (error) {
