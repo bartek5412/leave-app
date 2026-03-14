@@ -1,20 +1,13 @@
 "use client";
 
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { LeaveRequestFromApi } from "@/lib/types";
 import { ColumnDef } from "@tanstack/react-table";
-import { MoreHorizontal } from "lucide-react";
+import AcceptedRowActions from "./leaveRequestRowActions";
 
-export const columnsAccepted: ColumnDef<LeaveRequestFromApi>[] = [
+export const columnsAccepted = (
+  onActionSuccess: () => void,
+): ColumnDef<LeaveRequestFromApi>[] => [
   {
     accessorKey: "Status",
     header: () => <div className="text-center">Status</div>,
@@ -68,32 +61,23 @@ export const columnsAccepted: ColumnDef<LeaveRequestFromApi>[] = [
       );
     },
   },
-  // {
-  //   id: "actions",
-  //   header: () => <div className="text-center">Akcje</div>,
-  //   cell: ({ row }) => {
-  //     const payment = row.original;
+  {
+    id: "actions",
+    header: () => <div className="text-center">Akcje</div>,
+    cell: ({ row }) => {
+      const payment = row.original;
 
-  //     return (
-  //       <div className="text-center">
-  //         <DropdownMenu>
-  //           <DropdownMenuTrigger asChild>
-  //             <Button variant="ghost" className="h-8 w-8 p-0">
-  //               <span className="sr-only">Otwórz menu</span>
-  //               <MoreHorizontal className="h-4 w-4" />
-  //             </Button>
-  //           </DropdownMenuTrigger>
-  //           <DropdownMenuContent align="end">
-  //             <DropdownMenuLabel>Akcje</DropdownMenuLabel>
-  //             <DropdownMenuSeparator />
-  //             <DropdownMenuItem>Edytuj urlop</DropdownMenuItem>
-  //             <DropdownMenuItem className="bg-red-700 text-white focus:bg-red-600 focus:text-white mt-2">
-  //               Anuluj urlop
-  //             </DropdownMenuItem>
-  //           </DropdownMenuContent>
-  //         </DropdownMenu>
-  //       </div>
-  //     );
-  //   },
-  // },
+      return (
+        <AcceptedRowActions
+          status={row.original.status}
+          leaveId={row.original.id}
+          type={row.original.leaveTypeId}
+          startDate={row.original.startDate}
+          endDate={row.original.endDate}
+          hours={row.original.hours}
+          onSuccess={onActionSuccess}
+        />
+      );
+    },
+  },
 ];

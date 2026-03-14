@@ -24,6 +24,26 @@ export async function POST(request: Request) {
         userId: userId,
       },
     });
+    const webHookUrl = process.env.DISCORD_WEBHOOK_URL;
+
+    if (webHookUrl) {
+      const notification = await fetch(webHookUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          content: 
+          `Wpłyneło nowe zgłoszenie:
+          Tytył zgłoszenia: ** ${title}**
+          Treść zgłoszenia: **${message}** - @everyone`,
+        }),
+      });
+      if (!notification)
+        return NextResponse.json(
+          { message: "Błąd wysywałnia powiadomienia" },
+          { status: 500 },
+        );
+    }
+
     return NextResponse.json(dbResponse, { status: 200 });
   } catch (err) {
     return NextResponse.json({

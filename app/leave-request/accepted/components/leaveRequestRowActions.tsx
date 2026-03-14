@@ -27,10 +27,7 @@ import {
 } from "@/components/ui/select";
 import { LeaveRequestTypes } from "@/hooks/useLeaveTypes";
 import { MoreHorizontal } from "lucide-react";
-import { Switch } from "@/components/ui/switch";
 import { useEffect, useState } from "react";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { useSession } from "next-auth/react";
 import {
   AlertDialog,
@@ -46,8 +43,8 @@ import {
 import { toast } from "sonner";
 
 interface PendigRowActionsProps {
-  status: string;
   startDate: string;
+  status: string;
   endDate: string;
   type: string;
   leaveId: string;
@@ -55,7 +52,7 @@ interface PendigRowActionsProps {
   onSuccess: () => void;
 }
 
-export default function PendigRowActions({
+export default function AcceptedRowActions({
   status,
   hours,
   startDate,
@@ -69,7 +66,6 @@ export default function PendigRowActions({
   const hoursInDayS = session?.user.hoursInDay;
   const userId = session?.user.id;
   const [isEdit, setIsEdit] = useState(false);
-  const [isFullDay, setIsFullDay] = useState(false);
   const { leaveType, isLoading } = LeaveRequestTypes();
   const [payload, setPayload] = useState({
     status: status,
@@ -219,42 +215,6 @@ export default function PendigRowActions({
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>Akcje</DropdownMenuLabel>
-          <DropdownMenuSeparator />
-          {role === "LEADER" ? (
-            <DropdownMenuItem onClick={() => handleStatusChange("APPROVED")}>
-              Akceptuj
-            </DropdownMenuItem>
-          ) : null}{" "}
-          <AlertDialog>
-            <AlertDialogTrigger asChild>
-              {role === "LEADER" ? (
-                <DropdownMenuItem
-                  className=""
-                  onSelect={(e) => e.preventDefault()}
-                >
-                  Akceptuj (dodatkowy)
-                </DropdownMenuItem>
-              ) : null}
-            </AlertDialogTrigger>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>Czy jesteś pewien?</AlertDialogTitle>
-                <AlertDialogDescription>
-                  Ta operacja sprawi że ilość dni nie zostanie pobrana z puli
-                  użytkownika, czy mimo to chcesz to zrobić?
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel>Wróć</AlertDialogCancel>
-                <AlertDialogAction
-                  onClick={() => handleStatusChange("FREE")}
-                  className="bg-yellow-700 text-white hover:bg-yellow-700/90 focus:text-white"
-                >
-                  Potwierdz urlop darmowy
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
           <DropdownMenuItem onClick={() => setIsEdit(true)}>
             Edytuj urlop
           </DropdownMenuItem>

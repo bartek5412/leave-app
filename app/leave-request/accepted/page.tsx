@@ -17,23 +17,24 @@ export default function LeaveRequestSummary() {
   );
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    async function fetchLeaves() {
-      try {
-        setIsLoading(true);
-        const res = await fetch("/api/leave-request?status=APPROVED");
-        if (!res.ok) {
-          throw new Error("Błąd zapytania");
-        }
-        const resData: LeaveRequestFromApi[] = await res.json();
-        setFetchData(resData);
-      } catch (error) {
-        console.error("Fetch error", error);
-      } finally {
-        setIsLoading(false);
+  const refreshData = async () => {
+    try {
+      setIsLoading(true);
+      const res = await fetch("/api/leave-request?status=APPROVED");
+      if (!res.ok) {
+        throw new Error("Fetch error");
       }
+      const fetchData: LeaveRequestFromApi[] = await res.json();
+      setFetchData(fetchData);
+    } catch (error) {
+      console.error("Błąd zapytania", error);
+    } finally {
+      setIsLoading(false);
     }
-    fetchLeaves()
+  };
+
+  useEffect(() => {
+    refreshData();
   }, []);
   return (
     <SidebarProvider>
@@ -83,7 +84,7 @@ export default function LeaveRequestSummary() {
           {/* Kontener UserList: flex-1 i min-h-0 to klucz do działania ScrollArea */}
           <div className="bg-muted/50 flex-1 rounded-xl min-h-0 flex flex-col overflow-hidden">
             <DataTable
-              columns={columnsAccepted}
+              columns={columnsAccepted(refreshData)}
               data={fetchData ?? []}
               isLoading={isLoading}
             />

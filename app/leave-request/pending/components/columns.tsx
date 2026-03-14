@@ -76,6 +76,7 @@ export const columnsPending = (
     cell: ({ row }) => {
       return (
         <PendigRowActions
+          status={row.original.status}
           hours={row.original.hours}
           startDate={row.original.startDate}
           endDate={row.original.endDate}
