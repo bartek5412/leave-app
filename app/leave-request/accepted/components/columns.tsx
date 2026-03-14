@@ -69,6 +69,7 @@ export const columnsAccepted = (
 
       return (
         <AcceptedRowActions
+          googleId={row.original.googleId}
           status={row.original.status}
           leaveId={row.original.id}
           type={row.original.leaveTypeId}

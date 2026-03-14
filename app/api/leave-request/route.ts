@@ -8,6 +8,7 @@ export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const status = searchParams.get("status");
   const session = await getServerSession(authOptions);
+  const now = new Date();
   if (!session) {
     return NextResponse.json({ message: "Brak autoryzacji" }, { status: 401 });
   }
@@ -15,6 +16,7 @@ export async function GET(request: Request) {
     where: {
       userId: session?.user.role !== "LEADER" ? session?.user.id : undefined,
       status: status || undefined,
+      startDate: status === "APPROVED" ? { gt: now } : undefined,
     },
     include: {
       leaveType: true,

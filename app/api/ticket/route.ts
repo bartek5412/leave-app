@@ -34,7 +34,7 @@ export async function POST(request: Request) {
           content: 
           `Wpłyneło nowe zgłoszenie:
           Tytył zgłoszenia: ** ${title}**
-          Treść zgłoszenia: **${message}** - @everyone`,
+          Treść zgłoszenia: **${message}** - @here`,
         }),
       });
       if (!notification)

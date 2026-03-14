@@ -43,6 +43,7 @@ import {
 import { toast } from "sonner";
 
 interface PendigRowActionsProps {
+  googleId: string;
   startDate: string;
   status: string;
   endDate: string;
@@ -53,6 +54,7 @@ interface PendigRowActionsProps {
 }
 
 export default function AcceptedRowActions({
+  googleId,
   status,
   hours,
   startDate,
@@ -68,6 +70,7 @@ export default function AcceptedRowActions({
   const [isEdit, setIsEdit] = useState(false);
   const { leaveType, isLoading } = LeaveRequestTypes();
   const [payload, setPayload] = useState({
+    googleId,
     status: status,
     id: leaveId,
     type: type,
@@ -86,6 +89,7 @@ export default function AcceptedRowActions({
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
+          googleId: googleId,
           status: newStatus,
           hoursInDay: hoursInDayS,
           userId: userId,
