@@ -9,7 +9,7 @@ export async function PATCH(
 ) {
   try {
     const { id } = await params;
-    const { status, hoursInDay, userId } = await request.json();
+    const { status, hoursInDay, userId, googleId } = await request.json();
     if (!userId) {
       return NextResponse.json(
         { message: "Brak autoryzacji" },
@@ -29,7 +29,7 @@ export async function PATCH(
       if (!["APPROVED", "PENDING", "REJECTED", "FREE"].includes(status)) {
         throw new Error("Status wniosku jest nieprawidłowy");
       }
-      if (leave.status !== "PENDING") {
+      if (leave.status === "REJECTED") {
         throw new Error(
           "Wniosek nie może być zaakceptowany, niepoprawny status",
         );
@@ -50,23 +50,42 @@ export async function PATCH(
             availableDays: { decrement: summary },
           },
         });
+
+        try {
+          await createCalendarEvent(
+            id,
+            `Urlop - ${userName.firstName} ${userName.lastName}`,
+            leave.leaveType.name,
+            new Date(leave.startDate),
+            new Date(leave.endDate),
+          );
+        } catch (calendarError) {
+          console.error(calendarError);
+        }
       }
-      try {
-        await createCalendarEvent(
-          id,
-          `Urlop - ${userName.firstName} ${userName.lastName}`,
-          leave.leaveType.name,
-          new Date(leave.startDate),
-          new Date(leave.endDate),
-        );
-      } catch (calendarError) {
-        console.error(calendarError);
+      if (status === "REJECTED" && leave.status === "APPROVED") {
+        const userData = await tx.user.findUnique({ where: { id: userId } });
+        if (!userData) return;
+        const workingDays = getWorkingDays(leave.startDate, leave.endDate);
+        const summary = workingDays * hoursInDay;
+        await tx.user.update({
+          where: { id: userId },
+          data: { availableDays: { increment: summary } },
+        });
+        if (googleId) {
+          try {
+            await removeEvent(googleId);
+          } catch (err) {
+            console.error(err);
+          }
+        }
       }
       return await tx.leave.update({
         where: { id: leave.id },
         data: {
-          status: status === "FREE" ? "APPROVED" : "APPROVED",
-          acceptedAt: status === "APPROVED" ? new Date() : null,
+          status: status === "FREE" ? "APPROVED" : status,
+          acceptedAt:
+            status === "APPROVED" || status === "FREE" ? new Date() : null,
         },
       });
     });
