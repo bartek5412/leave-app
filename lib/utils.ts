@@ -10,18 +10,25 @@ export function getWorkingDays(start: Date, end: Date): number {
   const startDate = new Date(start.getTime());
   const endDate = new Date(end.getTime());
 
-  const freeDays = new Holidays("PL");
+  const hd = new Holidays("PL");
 
   startDate.setHours(0, 0, 0, 0);
   endDate.setHours(0, 0, 0, 0);
+
   while (startDate <= endDate) {
     const dayOfWeek = startDate.getDay();
     const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
 
-    const isPublicHolidays = freeDays.isHoliday(startDate);
-    if (!isWeekend && isPublicHolidays) {
+    const holidays = hd.isHoliday(startDate);
+
+    const isPublicHoliday = Array.isArray(holidays)
+      ? holidays.some((h) => h.type === "public")
+      : holidays && holidays.type === "public";
+
+    if (!isWeekend && !isPublicHoliday) {
       count++;
     }
+
     startDate.setDate(startDate.getDate() + 1);
   }
   return count;
