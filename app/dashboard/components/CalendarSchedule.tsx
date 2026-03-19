@@ -40,9 +40,9 @@ export default function CalendarSchedule({
   return (
     <Card className="w-full h-full flex flex-col">
       <CardHeader>Wybierz datę urlopu</CardHeader>
-      <CardContent className="flex flex-col flex-1">
+      <CardContent className="flex flex-col flex-1 items-center">
         <Calendar
-          className="w-full"
+          
           mode="range"
           locale={pl}
           numberOfMonths={2}

@@ -10,21 +10,24 @@ datasource db {
   provider = "sqlite"
 }
 model User {
-  id        String   @id @default(uuid())
-  leaves    Leave[]
-  email     String   @unique
-  password  String
-  firstName String
-  lastName  String
-  hoursInDay Int @default(8)
-  role      String   @default("EMPLOYEE")
-  leaderId  String?
-  leader    User?    @relation("UserLeader", fields: [leaderId], references: [id])
-  subordinates User[] @relation("UserLeader")
+  id            String   @id @default(uuid())
+  leaves        Leave[]
+  email         String   @unique
+  password      String
+  firstName     String
+  lastName      String
+  hoursInDay    Int @default(8)
+  role          String   @default("EMPLOYEE")
+  leaderId      String?
+  leader        User?    @relation("UserLeader", fields: [leaderId], references: [id])
+  subordinates  User[] @relation("UserLeader")
   availableDays Int
-  ticket    Ticket[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  ticket        Ticket[]
+  rooms         Rooms[]
+  reservations         RoomSchedule[] @relation("UserReservations")
+  confirmedSchedules   RoomSchedule[] @relation("ConfirmedReservations")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 }
 
 model LeaveType {
@@ -63,4 +66,25 @@ model Ticket {
   user    User @relation(fields: [userId], references: [id], onDelete: Restrict)
   createdAt DateTime @default(now())
 
+}
+
+model Rooms {
+  id        String @id @default(uuid())
+  name      String @unique
+  leaderId  String
+  leader    User @relation(fields: [leaderId], references: [id], onDelete: Restrict)
+}
+
+model RoomSchedule {
+  id            String @id @default(uuid())
+  startTime     DateTime
+  endTime       DateTime
+  userId        String
+  user          User @relation("UserReservations", fields: [userId], references: [id], onDelete: Restrict)
+  date          DateTime
+  confirmed     Boolean @default(false)
+  createdAt     DateTime @default(now())
+  confirmedAt   DateTime?
+  confirmedById String? 
+  confirmedBy   User? @relation("ConfirmedReservations", fields: [confirmedById], references: [id], onDelete: Restrict)
 }

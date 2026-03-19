@@ -4,6 +4,7 @@ import * as React from "react";
 import {
   CalendarDays,
   LifeBuoy,
+  Presentation,
   Send,
   UserCog,
 } from "lucide-react";
@@ -47,6 +48,19 @@ const data = {
         {
           title: "Archiwum",
           url: "/leave-request/archive",
+        },
+      ],
+    },
+    {
+      access: "EMPLOYE",
+      title: "Rezerwacja sali",
+      url: "/room-scheduler",
+      icon: Presentation,
+      isActive: false,
+      items: [
+        {
+          title: "Twoje rezerwacje",
+          url: "/leave-request/pending",
         },
       ],
     },
