@@ -1,29 +1,30 @@
+import { requireSession } from "@/lib/api-auth";
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 
 export async function POST(request: Request) {
   try {
-    const { title, message, userId } = await request.json();
-    if (!title || !message || !userId) {
+    const auth = await requireSession();
+    if ("response" in auth) {
+      return auth.response;
+    }
+
+    const { title, message } = await request.json();
+    if (!title || !message) {
       return NextResponse.json(
         { message: "Brak wymaganych danych do stworzenia zgłoszenia" },
         { status: 400 },
       );
     }
-    const checkUser = await prisma.user.findUnique({ where: { id: userId } });
-    if (!checkUser) {
-      return NextResponse.json(
-        { message: "Brak autoryzacji" },
-        { status: 401 },
-      );
-    }
+
     const dbResponse = await prisma.ticket.create({
       data: {
-        title: title,
-        message: message,
-        userId: userId,
+        title,
+        message,
+        userId: auth.session.user.id,
       },
     });
+
     const webHookUrl = process.env.DISCORD_WEBHOOK_URL;
 
     if (webHookUrl) {
@@ -31,23 +32,25 @@ export async function POST(request: Request) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          content: 
-          `Wpłyneło nowe zgłoszenie:
-          Tytył zgłoszenia: ** ${title}**
+          content: `Wpłynęło nowe zgłoszenie:
+          Tytuł zgłoszenia: ** ${title}**
           Treść zgłoszenia: **${message}** - @here`,
         }),
       });
-      if (!notification)
+
+      if (!notification.ok) {
         return NextResponse.json(
-          { message: "Błąd wysywałnia powiadomienia" },
+          { message: "Błąd wysyłania powiadomienia" },
           { status: 500 },
         );
+      }
     }
 
     return NextResponse.json(dbResponse, { status: 200 });
   } catch (err) {
-    return NextResponse.json({
-      message: `Błąd podczas tworzenia zgłoszenia: ${err}`,
-    });
+    return NextResponse.json(
+      { message: `Błąd podczas tworzenia zgłoszenia: ${err}` },
+      { status: 500 },
+    );
   }
 }

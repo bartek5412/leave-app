@@ -1,20 +1,29 @@
+import { requireRole, safeUserSelect } from "@/lib/api-auth";
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 import { NextResponse } from "next/server";
 
 export async function GET(request: Request) {
+  const auth = await requireRole(["LEADER"]);
+  if ("response" in auth) {
+    return auth.response;
+  }
+
   const { searchParams } = new URL(request.url);
   const role = searchParams.get("role");
   const users = await prisma.user.findMany({
     where: { role: role || undefined },
-    include: { leader: true },
+    select: safeUserSelect,
   });
+
   return NextResponse.json(users);
 }
+
 export async function POST(request: Request) {
   try {
     const payload = await request.json();
     const { email, firstName, lastName, password, passwordRepeat } = payload;
+
     if (!email || !firstName || !lastName || !password) {
       return NextResponse.json(
         { message: "Brak wymaganych danych do stworzenia użytkownika" },
@@ -23,8 +32,9 @@ export async function POST(request: Request) {
     }
 
     const checkUser = await prisma.user.findUnique({
-      where: { email: email },
+      where: { email },
     });
+
     if (checkUser) {
       return NextResponse.json(
         { message: "Adres email jest już w użyciu" },
@@ -43,13 +53,15 @@ export async function POST(request: Request) {
     const newUser = await prisma.user.create({
       data: {
         availableDays: 208,
-        email: email,
-        firstName: firstName,
-        lastName: lastName,
+        email,
+        firstName,
+        lastName,
         password: hashPassword,
         role: "EMPLOYE",
       },
+      select: safeUserSelect,
     });
+
     return NextResponse.json(
       { message: "Poprawnie stworzono użytkownika", user: newUser },
       { status: 200 },
@@ -57,7 +69,7 @@ export async function POST(request: Request) {
   } catch (error) {
     console.error("Błąd serwera", error);
     return NextResponse.json(
-      { message: `Błąd serwera${error}` },
+      { message: `Błąd serwera: ${error}` },
       { status: 500 },
     );
   }

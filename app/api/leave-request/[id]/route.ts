@@ -1,3 +1,4 @@
+import { requireRole, requireSession } from "@/lib/api-auth";
 import { createCalendarEvent, removeEvent } from "@/lib/googleCalendar";
 import { prisma } from "@/lib/prisma";
 import { getWorkingDays } from "@/lib/utils";
@@ -8,27 +9,28 @@ export async function PATCH(
   { params }: { params: Promise<{ id: string }> },
 ) {
   try {
-    const { id } = await params;
-    const { status, hoursInDay, userId, googleId } = await request.json();
-    if (!userId) {
-      return NextResponse.json(
-        { message: "Brak autoryzacji" },
-        { status: 401 },
-      );
+    const auth = await requireRole(["LEADER"]);
+    if ("response" in auth) {
+      return auth.response;
     }
-    const userName = await prisma.user.findUnique({ where: { id: userId } });
-    if (!userName) return;
+
+    const { id } = await params;
+    const { status, googleId } = await request.json();
+
     const result = await prisma.$transaction(async (tx) => {
       const leave = await tx.leave.findUnique({
         where: { id },
-        include: { leaveType: true },
+        include: { leaveType: true, user: true },
       });
+
       if (!leave) {
         throw new Error("Nie znaleziono wniosku urlopowego");
       }
+
       if (!["APPROVED", "PENDING", "REJECTED", "FREE"].includes(status)) {
         throw new Error("Status wniosku jest nieprawidłowy");
       }
+
       if (leave.status === "REJECTED") {
         throw new Error(
           "Wniosek nie może być zaakceptowany, niepoprawny status",
@@ -36,14 +38,13 @@ export async function PATCH(
       }
 
       if (status === "APPROVED") {
-        const userData = await tx.user.findUnique({ where: { id: userId } });
-        if (!userData) return;
         const workingDays = getWorkingDays(leave.startDate, leave.endDate);
-        const summary = workingDays * hoursInDay;
-        if (userData?.availableDays < summary) {
+        const summary = workingDays * leave.user.hoursInDay;
+
+        if (leave.user.availableDays < summary) {
           throw new Error("Brak dostępnych dni urlopu");
         }
-        console.error(summary);
+
         await tx.user.update({
           where: { id: leave.userId },
           data: {
@@ -54,7 +55,7 @@ export async function PATCH(
         try {
           await createCalendarEvent(
             id,
-            `Urlop - ${userName.firstName} ${userName.lastName}`,
+            `Urlop - ${leave.user.firstName} ${leave.user.lastName}`,
             leave.leaveType.name,
             new Date(leave.startDate),
             new Date(leave.endDate),
@@ -63,15 +64,16 @@ export async function PATCH(
           console.error(calendarError);
         }
       }
+
       if (status === "REJECTED" && leave.status === "APPROVED") {
-        const userData = await tx.user.findUnique({ where: { id: userId } });
-        if (!userData) return;
         const workingDays = getWorkingDays(leave.startDate, leave.endDate);
-        const summary = workingDays * hoursInDay;
+        const summary = workingDays * leave.user.hoursInDay;
+
         await tx.user.update({
-          where: { id: userId },
+          where: { id: leave.userId },
           data: { availableDays: { increment: summary } },
         });
+
         if (googleId) {
           try {
             await removeEvent(googleId);
@@ -80,7 +82,8 @@ export async function PATCH(
           }
         }
       }
-      return await tx.leave.update({
+
+      return tx.leave.update({
         where: { id: leave.id },
         data: {
           status: status === "FREE" ? "APPROVED" : status,
@@ -89,13 +92,17 @@ export async function PATCH(
         },
       });
     });
+
     return NextResponse.json(
       { message: "Wniosek zaktualizowany", leave: result },
       { status: 200 },
     );
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const message =
+      error instanceof Error ? error.message : "Błąd serwera";
+
     return NextResponse.json(
-      { message: error.message || "Błąd serwera" },
+      { message },
       { status: 400 },
     );
   }
@@ -103,38 +110,61 @@ export async function PATCH(
 
 export async function PUT(request: Request) {
   try {
+    const auth = await requireSession();
+    if ("response" in auth) {
+      return auth.response;
+    }
+
     const body = await request.json();
     const { id, hours, startDate, endDate, type, status, googleId } = body;
+
     if (!id || !hours || !startDate || !endDate || !type || !status) {
       return NextResponse.json(
         { message: "Brak wymaganych danych" },
         { status: 400 },
       );
     }
+
+    const leave = await prisma.leave.findUnique({
+      where: { id },
+      select: { userId: true },
+    });
+
+    if (!leave) {
+      return NextResponse.json(
+        { message: "Nie znaleziono wniosku urlopowego" },
+        { status: 404 },
+      );
+    }
+
+    const canManageAll = auth.session.user.role === "LEADER";
+    if (!canManageAll && leave.userId !== auth.session.user.id) {
+      return NextResponse.json({ message: "Brak uprawnień" }, { status: 403 });
+    }
+
     const finalStatus = status === "APPROVED" ? "PENDING" : status;
 
-    if (status === "APPROVED") {
-      if (googleId) {
-        try {
-          await removeEvent(googleId);
-        } catch (err) {
-          console.error(err);
-        }
+    if (status === "APPROVED" && googleId) {
+      try {
+        await removeEvent(googleId);
+      } catch (err) {
+        console.error(err);
       }
     }
 
     const result = await prisma.leave.update({
-      where: { id: id },
+      where: { id },
       data: {
-        id: id,
+        id,
         hours: Number(hours),
-        startDate: startDate,
-        endDate: endDate,
+        startDate,
+        endDate,
         leaveTypeId: type,
         updatedAt: new Date(),
         status: finalStatus,
       },
     });
+
     return NextResponse.json(
       { message: "Poprawnie zaktualizowano wniosek", data: result },
       { status: 200 },

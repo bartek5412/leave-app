@@ -1,18 +1,36 @@
+import { requireRole, safeUserSelect } from "@/lib/api-auth";
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 
 export async function GET(
-  request: Request,
+  _request: Request,
   { params }: { params: Promise<{ id: string }> },
 ) {
   try {
+    const auth = await requireRole(["LEADER"]);
+    if ("response" in auth) {
+      return auth.response;
+    }
+
     const { id } = await params;
     const result = await prisma.user.findUnique({
-      where: { id: id },
+      where: { id },
+      select: safeUserSelect,
     });
+
+    if (!result) {
+      return NextResponse.json(
+        { message: "Nie znaleziono użytkownika" },
+        { status: 404 },
+      );
+    }
+
     return NextResponse.json(result);
   } catch (error) {
-    throw new Error(`Błąd zapytanie ${error}`);
+    return NextResponse.json(
+      { message: `Błąd zapytania: ${error}` },
+      { status: 500 },
+    );
   }
 }
 
@@ -21,6 +39,11 @@ export async function PUT(
   { params }: { params: Promise<{ id: string }> },
 ) {
   try {
+    const auth = await requireRole(["LEADER"]);
+    if ("response" in auth) {
+      return auth.response;
+    }
+
     const { id } = await params;
     const body = await request.json();
     const {
@@ -32,34 +55,43 @@ export async function PUT(
       avaibleDays,
       hoursInDay,
     } = body;
+
     if (
       !firstName ||
       !lastName ||
       !role ||
       !email ||
-      !avaibleDays ||
-      !hoursInDay
+      avaibleDays === undefined ||
+      hoursInDay === undefined
     ) {
       return NextResponse.json(
         { message: "Brak wymaganych danych aby zaktualizować użytkownika" },
         { status: 400 },
       );
     }
+
     const result = await prisma.user.update({
-      where: { id: id },
+      where: { id },
       data: {
-        firstName: firstName,
-        lastName: lastName,
-        role: role,
-        email: email,
-        leaderId: leader,
+        firstName,
+        lastName,
+        role,
+        email,
+        leaderId: leader || null,
         availableDays: avaibleDays,
-        hoursInDay: hoursInDay,
+        hoursInDay,
       },
+      select: safeUserSelect,
     });
+
     return NextResponse.json(
       { message: "Poprawnie zaktualizowano użytkownika", data: result },
       { status: 200 },
     );
-  } catch {}
+  } catch (error) {
+    return NextResponse.json(
+      { message: `Błąd aktualizacji użytkownika: ${error}` },
+      { status: 500 },
+    );
+  }
 }

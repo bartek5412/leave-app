@@ -1,20 +1,24 @@
 import { LeavePayload } from "@/app/dashboard/page";
+import { requireSession } from "@/lib/api-auth";
 import { prisma } from "@/lib/prisma";
-import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
-import { authOptions } from "../auth/[...nextauth]/route";
 
 export async function GET(request: Request) {
+  const auth = await requireSession();
+  if ("response" in auth) {
+    return auth.response;
+  }
+
   const { searchParams } = new URL(request.url);
   const status = searchParams.get("status");
-  const session = await getServerSession(authOptions);
   const now = new Date();
-  if (!session) {
-    return NextResponse.json({ message: "Brak autoryzacji" }, { status: 401 });
-  }
+
   const data = await prisma.leave.findMany({
     where: {
-      userId: session?.user.role !== "LEADER" ? session?.user.id : undefined,
+      userId:
+        auth.session.user.role !== "LEADER"
+          ? auth.session.user.id
+          : undefined,
       status: status || undefined,
       startDate: status === "APPROVED" ? { gt: now } : undefined,
     },
@@ -30,26 +34,33 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   try {
+    const auth = await requireSession();
+    if ("response" in auth) {
+      return auth.response;
+    }
+
     const body: LeavePayload = await request.json();
-    const session = await getServerSession(authOptions);
-    const { description, hours, type, startDate, endDate } = body;
-    if (!type || !startDate || !endDate || !session?.user.id) {
+    const { hours, type, startDate, endDate } = body;
+
+    if (!type || !startDate || !endDate || !auth.session.user.id) {
       return NextResponse.json(
         { message: "Brak wymaganych danych" },
         { status: 400 },
       );
     }
+
     const newLeave = await prisma.leave.create({
       data: {
-        startDate: startDate,
-        endDate: endDate,
+        startDate,
+        endDate,
         status: "PENDING",
-        userId: session.user.id,
+        userId: auth.session.user.id,
         leaveTypeId: type,
-        hours: hours,
+        hours,
         isFree: false,
       },
     });
+
     return NextResponse.json(
       {
         message: "Poprawnie utworzono wniosek",
@@ -59,6 +70,6 @@ export async function POST(request: Request) {
     );
   } catch (error) {
     console.error("Błąd serwera", error);
-    return NextResponse.json({ message: "Bład serwera" }, { status: 500 });
+    return NextResponse.json({ message: "Błąd serwera" }, { status: 500 });
   }
 }

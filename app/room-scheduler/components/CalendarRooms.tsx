@@ -76,7 +76,7 @@ export function CalendarWithTime() {
         <FieldGroup className="flex flex-row">
           <Field className="">
             <FieldLabel>Godzina rozpoczęcia</FieldLabel>
-            <Select defaultValue="10:30">
+            <Select defaultValue="10:00">
               <SelectTrigger className="w-full">
                 <div className="flex items-center gap-2">
                   <Clock2Icon className="size-4 text-muted-foreground" />
@@ -85,27 +85,30 @@ export function CalendarWithTime() {
               </SelectTrigger>
               <SelectContent>
                 {TIME_OPTIONS.map((time) => (
-                  <SelectItem key={time} >
+                  <SelectItem key={time} value={time}>
                     {time}
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
           </Field>
-          <Field>
-            <FieldLabel htmlFor="time-to">Godzina zakończenia</FieldLabel>
-            <InputGroup>
-              <InputGroupInput
-                id="time-to"
-                type="time"
-                step="60"
-                defaultValue="12:30"
-                className="appearance-none [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none"
-              />
-              <InputGroupAddon>
-                <Clock2Icon className="text-muted-foreground" />
-              </InputGroupAddon>
-            </InputGroup>
+          <Field className="">
+            <FieldLabel>Godzina zakończenia</FieldLabel>
+            <Select defaultValue="14:00">
+              <SelectTrigger className="w-full">
+                <div className="flex items-center gap-2">
+                  <Clock2Icon className="size-4 text-muted-foreground" />
+                  <SelectValue placeholder="Wybierz godzinę" />
+                </div>
+              </SelectTrigger>
+              <SelectContent>
+                {TIME_OPTIONS.map((time) => (
+                  <SelectItem key={time} value={time}>
+                    {time}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </Field>
         </FieldGroup>
       </CardFooter>

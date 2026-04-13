@@ -1,3 +1,4 @@
+import { requireRole } from "@/lib/api-auth";
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 
@@ -5,20 +6,26 @@ export async function PUT(
   request: Request,
   { params }: { params: Promise<{ id: string }> },
 ) {
+  const auth = await requireRole(["LEADER"]);
+  if ("response" in auth) {
+    return auth.response;
+  }
+
   const { id } = await params;
-  const { name, description, userId } = await request.json();
+  const { name, description } = await request.json();
+
   if (!name) {
-    return NextResponse.json({ message: "Brak nazwy wniosku urlopowego" });
+    return NextResponse.json(
+      { message: "Brak nazwy wniosku urlopowego" },
+      { status: 400 },
+    );
   }
-  const checkUser = await prisma.user.findUnique({ where: { id: userId } });
-  if (!checkUser) {
-    return NextResponse.json({ message: "Brak autoryzacji" }, { status: 401 });
-  }
+
   try {
     const response = await prisma.leaveType.update({
-      where: { id: id },
+      where: { id },
       data: {
-        name: name,
+        name,
         description: description || undefined,
       },
     });
@@ -27,16 +34,23 @@ export async function PUT(
     return NextResponse.json({ message: `Błąd: ${err}` }, { status: 500 });
   }
 }
+
 export async function DELETE(
-  request: Request,
+  _request: Request,
   { params }: { params: Promise<{ id: string }> },
 ) {
+  const auth = await requireRole(["LEADER"]);
+  if ("response" in auth) {
+    return auth.response;
+  }
+
   const { id } = await params;
   if (!id) {
     return NextResponse.json({ message: "Brak ID wniosku" }, { status: 400 });
   }
+
   try {
-    const response = await prisma.leaveType.delete({ where: { id: id } });
+    const response = await prisma.leaveType.delete({ where: { id } });
     return NextResponse.json(response, { status: 200 });
   } catch (err) {
     return NextResponse.json({ message: `Błąd: ${err}` }, { status: 500 });
