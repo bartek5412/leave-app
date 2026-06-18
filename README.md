@@ -116,9 +116,4 @@ App URLs:
 - app entry: `http://localhost:3000/dashboard`
 - login: `http://localhost:3000/login`
 
-## Demo credentials (from current seed/login defaults)
-
-- Email: `jan.kowalski@example.com`
-- Password: `1234`
-
 
